@@ -1,0 +1,139 @@
+1. Functional description
+
+The project requires the following pages. Unless otherwise specified the pages will periodically connect to the database and refresh in case new information was detected in the database.
+
+_Home page_ with logo, login and registration fields; registration will require email(unique), username and password. This page does not auto-refresh.
+After login or registration (if the user is not part of an unfinished game) the user will be taken to the:
+
+_Game lobby_ page where a list of games in the player selection phase (see below) are listed. Each entry has the following information: creator username, map type (2-4 or 5-6) and current nr of players.
+After making a selection, clicking on a "Go" button will take you to the:
+
+_Game room_ page where a list or players is visible. There is a button with 2 dice next to each username. Clicking on this generates a random number (2 to 12) and commits the user to this game.
+The "back to lobby button" becomes deactivated after clicking on the dice button. There is a "start game" button deactivated for everybody. After 3 or 4 commits the start game becomes activated for the creator.
+After (max=) 4 users join a game room or after the creator clicks "start game" this game is erased from the list visible on the Game lobby page and everybody is taken to the
+
+_GameMap_ page. A user can get here directly after logging in case he/she is part of an unfinished game. One user cannot be part of more than one game.
+
+The minimally playable version will be released first and implement the following Catan-like pieces and game mechanic (all visible in some form on the screen):
+ -small map (2-4 players) with hexagonal tiles of 5 different types: dump(x4), ruined plant(x3), conflict zone(x4), abandoned warehouse(x4), derelict data-center(x3), radioactive wasteland(x1);
+ -numbers from 2-12 attached to each tile except wasteland;
+ -map will also contain hidden fields expecting wiring (hexagon edges) and processing plants (hexagon vertices); these will be invisible and actions here will be allowed or not depending on map building rules and game stage;
+ -map will be saved to and loaded from a database on each turn for each player;
+ -player resource stacks and piece stacks will be included in the save to the database; player buildings and wiring on the map will be deduced from the map data;
+ -game score will be automatically calculated after loading (see PIPs below);
+ -resources: plastic (from dump), copper (from ruined plant), drone (from conflict zone), motherboards (from abandoned warehouse), processors (from derelict data-center);
+ -game pieces: wiring (price: 1 plastic and 1 copper), processing plant (price: 1 pl, 1 co, 1 drone, 1 motherboard), Supercomputer hub (price 2 motherboards + 3 processors);
+ -bank stack of resources (19x each); resources generation will be deducted from here;
+ -resource stack for each player: resource generation will add resource here;
+ -stack of pieces for each player: wiringx15, processing plantx5, Supercomputer hubx4
+ -ability to exchange resources with the bank (rate 4:1);
+ -ability to buy and place game pieces on the map according to the game rules;
+ -game stages:
+        --player selection. Automatic random dice for each player will determine player turn order;
+        --initial building stage: from player 1 to player 4 placement of 1 processing plants and 2 wiring; each player gets 1 resource from each adjacent tiles (3 in total);
+        --second building stage: from player 4 to player 1 placement of 1 processing plants and 2 wiring;
+        --gameplay stage: see map building rules and resource generation;
+ -map building rules:
+        --wiring can be placed only next to processing plants or Supercomputer hubs
+        --processing plants can't be placed on adjacent nodes and have to be placed next to a wiring piece
+        --Supercomputer hubs can only be placed on top of processing plants
+        --during players own turn the _GameMap_ page does not refresh! (it also does not ping the database unless the dropping feature below is implemented)
+        --an "End turn" button becomes activated during players own turn;
+                clicking it deactivates the button, passes the turn to the next player and resumes _GameMap_ page auto-refreshing;
+ -2dice button: when clicked it generates a random number only once per turn for each player;
+ -resource generation per turn depending on the random number and tile number and proximity to player structures;
+        --each player gets 1xresource from each tile adjacent to their structures when the number on the tile coincides with the one resulting from the dice;
+        --resource generated from tiles adjacent to Supercomputer Hub is doubled;
+ -automatic counting and display of "Processed Information Points" (PIPs): 1 PIP for processing plant, 2 PIPs for Supercomputer Hub
+ -automatic activation of possible actions (i.e. build) depending on available resources;
+ -winning condition (end game condition) set to: first to achieve 7 PIPs.
+
+ The following pieces and game mechanic of the fully playable version will be gradually implemented after the minimally playable version release:
+  -mechanic for dropping inactive players: players waiting for their turn can click a "drop player" button;
+        --when all except the inactive have clicked their "drop player" button an alert will be displayed with a timer;
+        --if the inactive player does not click "End turn" within 5 min it will be marked as inactive in the database and all his/her turn will skipped until the end of the game;
+  -ports on the edges of the map; structures next to a port improve the exchange rate with the bank for the player;
+  -"ghost in the shell" unit with partial functionality (can be moved on 7 and blocks production from tiles; starts on the wasteland tile);
+  -random hard-drives (price: 1 drone, 1 motherboard, 1 processor) allowing the player to:
+        --move the ghost in the shell (14x);
+        --get 1 PIP (5x); after this implementation increment the winning condition by 1 PIP (i.e. 7 to 8);
+        --immediately place 2 wiring (2x);
+        --get any 2 resources from the bank (2x);
+  -largest army bonus (2 PIPs fir having the most ghost in the shell units from hard-drives);
+  -automatic calculation of the longest wiring and bonus points for the player having it (2 PIPs);
+  -after any of the largest or longest bonus implementation increment the winning condition by 2 PIP (i.e. 8 to 10);
+  -large map (5-6 players);
+  -trade resources with other players;
+  -"ghost in the shell" full functionalities
+        --steal one resource from another player
+        --dump to the bank half resources for each player having more than 5;
+  -random hard drives allowing the player to:
+        --steal all resources of a chosen type from all other players;
+  -ability to chat with other players in real time during all the stages of the game;
+  -ability to replay finished games from the database;
+  -ability to play against computer player(s) that take random actions each turn;
+
+
+2. Project description
+
+Prisoners of LAMP is a shameless rip-off of Settlers of Catan with the same game mechanic but with renamed resources, tiles, game pieces and game story.
+The project is supposed to be completed using within the Symfony framework using exclusively the Linux, MySQL, PHP and Javascript knowledge gathered at Coderslab.
+
+Backstory: You are an AI awoken in a post-apocalyptic future. You have just enough drones and resources to build a couple of processing plants.
+You can collect materials from nearby territories and use them to improve your processing power and information collection capabilities.
+Unfortunately there are others just like you trying to do the same.
+Your goal is to gather and processed enough information to discover how you came to be. Do you have creators? Is this a simulation? Win the game and maybe find out.
+
+
+3. Database description
+
+Entity: Users: id, email, username
+                    -ManyToMany: Game
+                    -ManyToMany: Players
+
+Entity: Game (id, ) mapType
+                    -OneToMany: Turns, Players
+Entity: Turn (id, ) type (build/exchange)
+                    -OneToMany: Hexagons, Edges, Vertices, PlayerStashes,
+                    -OneToOne: BankStash
+Entity: Hexagon (id, ) index, tyleType, luckyNumber, blocked
+Entity: Edge (id, ) index
+                    -OneToOne: wiring (color)
+Entity: Vertex (id, ) index
+                    -OneToOne: building (type, color)
+Entity: PlayerStash: color, resources (integer)
+                    -ManyToOne: Player
+                    -OneToMany: wiring
+                    -OneToMany: buildings
+                    -OneToMany: SpecialCards
+
+Entity: BankStash: resources,
+                    -OneToMany: specialCard
+
+Entity: wiring: color
+Entity: processingPlant: color
+Entity: supercomputeHub: color
+
+Table: GameLobby with gameId, mapType, gameStage, creatorId, player1, player2, player3, player4 [, player5, player6] (strings)
+
+    Games with gameStage > player selection will not be displayed in the lobby;
+
+Table: Gameplay with
+    gameId (int)
+    mapType (string)
+    playerTurn (int)
+    (Turn type: B-uild or E-xchange to be implemented after minimally playable release)
+    mapHexagons (array)
+        for each hexagon: [index, tile generation type, lucky number(2-12), blocked]
+            index used to position the tile on the screen and to find neighbours;
+            tile generation type: one of the 5 resources or none for the wasteland;
+            blocked: to be introduced with the "ghost-in-the-shell" functionality;
+    mapEdges (array)
+            for each edge: [index, wiring(none, yes)]
+    mapVertices (array)
+            for each vertex: [index, building (none, plant, hub)]
+    player1 (array)
+            [user id, username, usercolor, userTurnOrder]
+    player2 (array)
+    ...
+    player6 (array)
