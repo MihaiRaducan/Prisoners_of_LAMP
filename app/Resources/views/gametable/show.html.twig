@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Gametable</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ gameTable.id }}</td>
+            </tr>
+            <tr>
+                <th>Maptype</th>
+                <td>{{ gameTable.mapType }}</td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td>{% if gameTable.status %}Yes{% else %}No{% endif %}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table>
+        <tbody>
+        {% for user in gameTable.users %}
+        <tr>
+            <th>Player</th>
+            <td>{{ user.getUsername }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('gametable_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('gametable_edit', { 'id': gameTable.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

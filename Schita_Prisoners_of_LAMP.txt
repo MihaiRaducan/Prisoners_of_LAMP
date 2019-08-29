@@ -87,9 +87,14 @@ Your goal is to gather and processed enough information to discover how you came
 
 3. Database description
 
-Entity: Users: id, email, username
-                    -ManyToMany: Game
-                    -ManyToMany: Players
+Entity: Users: created using FOSUserBundle
+                    -ManyToMany: GameTable
+                    -OneToMany: Players
+
+GameTable:  mapType, status (open/closed)
+                    -ManyToMany: Users, Players
+
+Entity: Player: turnOrder, color, initialDiceRoll
 
 Entity: Game (id, ) mapType
                     -OneToMany: Turns, Players
@@ -110,9 +115,10 @@ Entity: PlayerStash: color, resources (integer)
 Entity: BankStash: resources,
                     -OneToMany: specialCard
 
-Entity: wiring: color
-Entity: processingPlant: color
-Entity: supercomputeHub: color
+Entity: wiring: color, points, cost (some starting pieces have cost zero)
+Entity: processingPlant: color, points, cost
+Entity: supercomputeHub: color, points, cost
+Entity: specialCard: points
 
 Table: GameLobby with gameId, mapType, gameStage, creatorId, player1, player2, player3, player4 [, player5, player6] (strings)
 
