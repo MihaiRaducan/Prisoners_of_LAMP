@@ -136,8 +136,8 @@ class GameTableController extends Controller
 
     private function alreadyPlaying (UserInterface $user=null) {
         $response = false;
-        foreach ($user->getGameTables() as $gameTable) {
-            if ($gameTable->getStatus() == true) {
+        foreach ($user->getPlayers() as $player) {
+            if ($player->getGameTable()->getStatus() == true) {
                 $response = true;
             }
         }

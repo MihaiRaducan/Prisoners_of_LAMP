@@ -38,43 +38,13 @@ class GameTable
     private $status;
 
     /**
-     * @ORM\ManyToMany(targetEntity="User", mappedBy="gameTables")
-     */
-    private $users;
-
-    /**
      * @ORM\OneToMany(targetEntity="Player", mappedBy="gameTable")
      */
     private $players;
 
     public function __construct()
     {
-        $this->users = new ArrayCollection();
         $this->players = new ArrayCollection();
-    }
-
-    /**
-     * @param User $user
-     */
-    public function addUser(User $user)
-    {
-        if ($this->users->contains($user)) {
-            return;
-        }
-        $this->users->add($user);
-        $user->addToGameTable($this);
-    }
-
-    /**
-     * @param User $user
-     */
-    public function removeUser(User $user)
-    {
-        if (!$this->users->contains($user)) {
-            return;
-        }
-        $this->users->removeElement($user);
-        $user->removeFromGameTable($this);
     }
 
     /**
@@ -162,16 +132,17 @@ class GameTable
     /**
      * @return mixed
      */
-    public function getUsers()
+    public function getPlayers()
     {
-        return $this->users;
+        return $this->players;
     }
 
     /**
-     * @param mixed $users
+     * @param mixed $players
      */
-    public function setUsers($users)
+    public function setPlayers($players)
     {
-        $this->users = $users;
+        $this->players = $players;
     }
+
 }

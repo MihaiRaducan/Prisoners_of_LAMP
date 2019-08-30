@@ -22,10 +22,10 @@
 
     <table>
         <tbody>
-        {% for user in gameTable.users %}
+        {% for player in gameTable.players %}
         <tr>
             <th>Player</th>
-            <td>{{ user.getUsername }}</td>
+            <td>{{ player.user.getUsername }}</td>
         </tr>
         {% endfor %}
         </tbody>
