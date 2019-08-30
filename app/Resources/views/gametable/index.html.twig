@@ -6,28 +6,31 @@
     <table>
         <thead>
             <tr>
-                <th>Id</th>
                 <th>Map Type</th>
+                <th>Created by</th>
                 <th>Open</th>
-                <th>Actions</th>
+                <th colspan="2">Actions</th>
             </tr>
         </thead>
         <tbody>
         {% for gameTable in gameTables %}
             <tr>
-                <td><a href="{{ path('gametable_show', { 'id': gameTable.id }) }}">{{ gameTable.id }}</a></td>
                 <td>{{ gameTable.mapType }}</td>
+                <td>{{ gameTable.players[0].user.username }}</td>
                 <td>{% if gameTable.status %}Yes{% else %}No{% endif %}</td>
                 <td>
-                    <ul>
-                        <li>
-                            <a href="{{ path('gametable_show', { 'id': gameTable.id }) }}">show</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('gametable_edit', { 'id': gameTable.id }) }}">edit</a>
-                        </li>
-                    </ul>
+                    <form action="{{ path('gametable_join', { 'id': gameTable.id }) }}" method="get">
+                            <input type="submit" value="show">
+                    </form>
                 </td>
+                <td>
+                    {% if fullStatus[gameTable.id] == false and alreadyPlaying == false %}
+                    <form action="{{ path('gametable_join', { 'id': gameTable.id }) }}" method="post">
+                        <input type="submit" value="join">
+                    </form>
+                    {% endif %}
+                </td>
+
             </tr>
         {% endfor %}
         </tbody>

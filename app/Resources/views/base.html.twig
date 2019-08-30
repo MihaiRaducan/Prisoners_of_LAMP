@@ -16,12 +16,18 @@
         <div class="container">
             <div class="row justify-content-md-end">
                 <div class="col-md-auto">
-                    Wellcome {{ app.user.username }}
+                    Wellcome {% if app.user is not null %}{{ app.user.username }}{% endif %}
                 </div>
                 <div class="col-md-auto">
+                    {% if app.user is not null %}
                     <form action="{{ path('fos_user_security_logout') }}">
                         <button>logout</button>
                     </form>
+                    {% else %}
+                        <form action="{{ path('fos_user_security_login') }}">
+                            <button>login</button>
+                        </form>
+                    {% endif %}
                 </div>
             </div>
         </div>

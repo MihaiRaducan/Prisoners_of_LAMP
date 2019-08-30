@@ -14,7 +14,7 @@
                 <td>{{ gameTable.mapType }}</td>
             </tr>
             <tr>
-                <th>Status</th>
+                <th>Open</th>
                 <td>{% if gameTable.status %}Yes{% else %}No{% endif %}</td>
             </tr>
         </tbody>
@@ -26,22 +26,21 @@
         <tr>
             <th>Player</th>
             <td>{{ player.user.getUsername }}</td>
+            {% if player.user == app.user %}
+            <td>
+                {{ form_start(leave_form) }}
+                <input type="submit" value="Leave">
+                {{ form_end(leave_form) }}
+            </td>
+            {% endif %}
         </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <ul>
-        <li>
-            <a href="{{ path('gametable_index') }}">Back to the list</a>
-        </li>
-        <li>
-            <a href="{{ path('gametable_edit', { 'id': gameTable.id }) }}">Edit</a>
-        </li>
-        <li>
-            {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
-            {{ form_end(delete_form) }}
-        </li>
-    </ul>
+    <form action="{{ path('gametable_index') }}" method="get">
+        <input type="submit" value="Back to the list">
+    </form>
+
 {% endblock %}
+

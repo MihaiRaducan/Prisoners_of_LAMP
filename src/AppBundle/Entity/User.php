@@ -30,6 +30,30 @@ class User extends BaseUser
     }
 
     /**
+     * @param Player $player
+     */
+    public function addPlayer(Player $player)
+    {
+        if ($this->players->contains($player)) {
+            return;
+        }
+        $this->players->add($player);
+        $player->setUser($this);
+    }
+
+    /**
+     * @param Player $player
+     */
+    public function removePlayer(Player $player)
+    {
+        if (!$this->players->contains($player)) {
+            return;
+        }
+        $this->players->removeElement($player);
+        $player->setUser(null);
+    }
+
+    /**
      * @return mixed
      */
     public function getPlayers()

@@ -19,18 +19,26 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class GameTableController extends Controller
 {
     /**
-     * Lists all gameTable entities.
-     *
+     * Lists all gameTable entities that are still open
+     * gameTables with max number of players will not show the join button
      * @Route("/", name="gametable_index", methods={"GET"})
      */
-    public function indexAction()
+    public function indexAction(UserInterface $user=null)
     {
         $em = $this->getDoctrine()->getManager();
+        $gameTables = $em->getRepository('AppBundle:GameTable')->findByStatus(true);
 
-        $gameTables = $em->getRepository('AppBundle:GameTable')->findAll();
+        $fullStatus = [];
+        foreach ($gameTables as $gameTable) {
+            $fullStatus [$gameTable->getId()] = $this->isFull($gameTable);
+        }
 
+        dump($fullStatus);
+        dump($this->alreadyPlaying($user));
         return $this->render('gametable/index.html.twig', array(
             'gameTables' => $gameTables,
+            'fullStatus' => $fullStatus,
+            'alreadyPlaying' => $this->alreadyPlaying($user),
         ));
     }
 
@@ -40,7 +48,7 @@ class GameTableController extends Controller
      * users can't create more than one active table at a time
      * @Route("/new/{type}", name="gametable_new", methods={"GET"})
      */
-    public function newAction(UserInterface $user=null, $type)
+    public function newAction($type, UserInterface $user=null)
     {
         if (!in_array($type, ["2-4", "5-6"]) || $this->alreadyPlaying($user)) {
             return $this->redirectToRoute('router');
@@ -49,15 +57,19 @@ class GameTableController extends Controller
         $player->setUser($user);
 
         $gameTable = new GameTable();
-        $gameTable->setStatus(true)->setMapType($type)->addUser($user);
-        $gameTable->addPlayer($player);
+        $gameTable->setStatus(true)->setMapType($type)->addPlayer($player);
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($player);
         $em->persist($gameTable);
         $em->flush();
 
-        return $this->redirectToRoute('gametable_show', array('id' => $gameTable->getId()));
+        $leaveForm = $this->createLeaveForm($gameTable);
+
+        return $this->redirectToRoute('gametable_show', array(
+            'id' => $gameTable->getId(),
+            'leave_form' => $leaveForm->createView(),
+        ));
     }
 
     /**
@@ -65,73 +77,82 @@ class GameTableController extends Controller
      *
      * @Route("/{id}", name="gametable_show", methods={"GET"})
      */
-    public function showAction(GameTable $gameTable)
+    public function showAction($id)
     {
-        $deleteForm = $this->createDeleteForm($gameTable);
+        $em = $this->getDoctrine()->getManager();
+        $gameTable = $em->getRepository('AppBundle:GameTable')->find($id);
+
+        if ($gameTable == null) {
+            return $this->redirectToRoute('router');
+        }
+
+        $leaveForm = $this->createLeaveForm($gameTable);
 
         return $this->render('gametable/show.html.twig', array(
             'gameTable' => $gameTable,
-            'delete_form' => $deleteForm->createView(),
+            'leave_form' => $leaveForm->createView(),
         ));
     }
 
     /**
-     * Displays a form to edit an existing gameTable entity.
+     * Finds and joins a gameTable entity only if the user_player is not partipating in other gameTables
      *
-     * @Route("/{id}/edit", name="gametable_edit", methods={"GET", "POST"})
+     * @Route("/{id}", name="gametable_join", methods={"POST"})
      */
-    public function editAction(Request $request, GameTable $gameTable)
+    public function joinAction($id, UserInterface $user=null)
     {
-        $deleteForm = $this->createDeleteForm($gameTable);
-        $editForm = $this->createForm('AppBundle\Form\GameTableType', $gameTable);
-        $editForm->handleRequest($request);
+        $em = $this->getDoctrine()->getManager();
+        $gameTable = $em->getRepository('AppBundle:GameTable')->find($id);
 
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+        if ($this->alreadyPlaying($user) || $gameTable == null || $gameTable->getStatus() == false || $this->isFull($gameTable)) {
+            return $this->redirectToRoute('router');
+        }
+        $leaveForm = $this->createLeaveForm($gameTable);
 
-            return $this->redirectToRoute('gametable_edit', array('id' => $gameTable->getId()));
+        $player = new Player();
+        $player->setUser($user);
+        $gameTable->addPlayer($player);
+        if ($this->isFull($gameTable)) {
+            $gameTable->setStatus(false);
         }
 
-        return $this->render('gametable/edit.html.twig', array(
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($player);
+        $em->persist($gameTable);
+        $em->flush();
+
+        return $this->render('gametable/show.html.twig', array(
             'gameTable' => $gameTable,
-            'edit_form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
+            'leave_form' => $leaveForm->createView(),
         ));
     }
 
     /**
-     * Deletes a gameTable entity.
+     * Removes the current player belonging to the user from a gameTable entity.
      *
-     * @Route("/{id}", name="gametable_delete", methods={"DELETE"})
+     * @Route("/{id}", name="gametable_leave", methods={"DELETE"})
      */
-    public function deleteAction(Request $request, GameTable $gameTable)
+    public function leaveAction(Request $request, GameTable $gameTable, UserInterface $user=null)
     {
-        $form = $this->createDeleteForm($gameTable);
+        $form = $this->createLeaveForm($gameTable);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $em->remove($gameTable);
+
+            foreach ($gameTable->getPlayers() as $player){
+                if ($player->getUser() === $user) {
+                    $gameTable->removePlayer($player);
+                    $user->removePlayer($player);
+                    $em->remove($player);
+                }
+            }
+            if (count($gameTable->getPlayers()) == 0) {
+                $em->remove($gameTable);
+            }
             $em->flush();
         }
-
         return $this->redirectToRoute('gametable_index');
-    }
-
-    /**
-     * Creates a form to delete a gameTable entity.
-     *
-     * @param GameTable $gameTable The gameTable entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createDeleteForm(GameTable $gameTable)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('gametable_delete', array('id' => $gameTable->getId())))
-            ->setMethod('DELETE')
-            ->getForm()
-        ;
     }
 
     private function alreadyPlaying (UserInterface $user=null) {
@@ -140,7 +161,35 @@ class GameTableController extends Controller
             if ($player->getGameTable()->getStatus() == true) {
                 $response = true;
             }
+            //add other conditions type getGame()->getStatus()
         }
         return $response;
+    }
+
+    /**
+     * finds the GameTable instances that are not yet full and still open
+     * @return bool
+     *
+     */
+    private function isFull(GameTable $gameTable) {
+        $maxPlayers = substr($gameTable->getMapType(), -1);
+        if (count($gameTable->getPlayers()) < intval($maxPlayers)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * create a leave form for when a player wishes to leave a game_table
+     * @param GameTable $gameTable
+     * @return \Symfony\Component\Form\FormInterface
+     */
+    private function createLeaveForm(GameTable $gameTable)
+    {
+        return $this->createFormBuilder()
+            ->setAction($this->generateUrl('gametable_leave', array('id' => $gameTable->getId())))
+            ->setMethod('DELETE')
+            ->getForm()
+            ;
     }
 }
