@@ -13,7 +13,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Gametable controller.
- * @Security("has_role('ROLE_USER')")
  * @Route("gametable")
  */
 class GameTableController extends Controller
@@ -33,8 +32,6 @@ class GameTableController extends Controller
             $fullStatus [$gameTable->getId()] = $this->isFull($gameTable);
         }
 
-        dump($fullStatus);
-        dump($this->alreadyPlaying($user));
         return $this->render('gametable/index.html.twig', array(
             'gameTables' => $gameTables,
             'fullStatus' => $fullStatus,
@@ -45,8 +42,8 @@ class GameTableController extends Controller
     /**
      * Creates a new gameTable entity.
      * type is restricted to two choices: '2-4'' and '5-6'
-     * users can't create more than one active table at a time
-     * @Route("/new/{type}", name="gametable_new", methods={"GET"})
+     * users can't create more than one table at a time
+     * @Route("/new/{type}", name="gametable_new", methods={"POST"})
      */
     public function newAction($type, UserInterface $user=null)
     {
@@ -112,9 +109,6 @@ class GameTableController extends Controller
         $player = new Player();
         $player->setUser($user);
         $gameTable->addPlayer($player);
-        if ($this->isFull($gameTable)) {
-            $gameTable->setStatus(false);
-        }
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($player);
@@ -155,6 +149,11 @@ class GameTableController extends Controller
         return $this->redirectToRoute('gametable_index');
     }
 
+    /**
+     * finds whether the user has a player already involved in a game(Table)
+     * @param UserInterface|null $user
+     * @return bool
+     */
     private function alreadyPlaying (UserInterface $user=null) {
         $response = false;
         foreach ($user->getPlayers() as $player) {
@@ -167,9 +166,8 @@ class GameTableController extends Controller
     }
 
     /**
-     * finds the GameTable instances that are not yet full and still open
+     * determines whether a GameTable is full
      * @return bool
-     *
      */
     private function isFull(GameTable $gameTable) {
         $maxPlayers = substr($gameTable->getMapType(), -1);
