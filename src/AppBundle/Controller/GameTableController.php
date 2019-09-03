@@ -61,17 +61,14 @@ class GameTableController extends Controller
         $em->persist($gameTable);
         $em->flush();
 
-        $leaveForm = $this->createLeaveForm($gameTable);
-
         return $this->redirectToRoute('gametable_show', array(
             'id' => $gameTable->getId(),
-            'leave_form' => $leaveForm->createView(),
         ));
     }
 
     /**
      * Finds and displays a gameTable entity.
-     *
+     * if the gameTable has more than the allowed number of players, the last additions are dropped
      * @Route("/{id}", name="gametable_show", methods={"GET"})
      */
     public function showAction($id)
@@ -81,6 +78,11 @@ class GameTableController extends Controller
 
         if ($gameTable == null) {
             return $this->redirectToRoute('router');
+        }
+
+        $maxPlayers = substr($gameTable->getMapType(), -1);
+        if (count($gameTable->getPlayers()) > intval($maxPlayers)) {
+            return false;
         }
 
         $leaveForm = $this->createLeaveForm($gameTable);
