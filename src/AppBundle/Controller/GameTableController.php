@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -71,24 +72,53 @@ class GameTableController extends Controller
      * if the gameTable has more than the allowed number of players, the last additions are dropped
      * @Route("/{id}", name="gametable_show", methods={"GET"})
      */
-    public function showAction($id)
+    public function showAction($id, UserInterface $user=null)
     {
         $em = $this->getDoctrine()->getManager();
         $gameTable = $em->getRepository('AppBundle:GameTable')->find($id);
+
+        dump($gameTable);
 
         if ($gameTable == null) {
             return $this->redirectToRoute('router');
         }
 
         $maxPlayers = substr($gameTable->getMapType(), -1);
-        if (count($gameTable->getPlayers()) > intval($maxPlayers)) {
-            return false;
+        $removed = 0;
+        $em = $this->getDoctrine()->getManager();
+        while (count($gameTable->getPlayers()) > intval($maxPlayers)) {
+            $players = $gameTable->getPlayers();
+            $em->remove($players[count($players) - 1]);
+            $em->flush();
+            $removed++;
         }
+
+        if ($removed !== 0) {
+            return $this->redirectToRoute('router');
+        }
+
+        $colors = [null, 'red', 'blue', 'white', 'orange', 'green', 'brown'];
+
+        foreach ($colors as $color){
+            $colorList[$color] = $color;
+        }
+
+        $colorForm = $this->createFormBuilder($this->getPlayer($gameTable, $user))
+            ->add('color', ChoiceType::class, [
+                'choices' => $colorList
+                ])
+            ->getForm()
+        ;
+
+
+
+
 
         $leaveForm = $this->createLeaveForm($gameTable);
 
         return $this->render('gametable/show.html.twig', array(
             'gameTable' => $gameTable,
+            'color_form' => $colorForm->createView(),
             'leave_form' => $leaveForm->createView(),
         ));
     }
@@ -106,7 +136,6 @@ class GameTableController extends Controller
         if ($this->alreadyPlaying($user) || $gameTable == null || $gameTable->getStatus() == false || $this->isFull($gameTable)) {
             return $this->redirectToRoute('router');
         }
-        $leaveForm = $this->createLeaveForm($gameTable);
 
         $player = new Player();
         $player->setUser($user);
@@ -117,9 +146,8 @@ class GameTableController extends Controller
         $em->persist($gameTable);
         $em->flush();
 
-        return $this->render('gametable/show.html.twig', array(
-            'gameTable' => $gameTable,
-            'leave_form' => $leaveForm->createView(),
+        return $this->redirectToRoute('gametable_show', array(
+            'id' => $gameTable->getId(),
         ));
     }
 
@@ -156,15 +184,14 @@ class GameTableController extends Controller
      * @param UserInterface|null $user
      * @return bool
      */
-    private function alreadyPlaying (UserInterface $user=null) {
-        $response = false;
+    private function alreadyPlaying (UserInterface $user) {
         foreach ($user->getPlayers() as $player) {
             if ($player->getGameTable()->getStatus() == true) {
-                $response = true;
+                return true;
             }
-            //add other conditions type getGame()->getStatus()
+            //TO DO: add other conditions type getGame()->getStatus()
         }
-        return $response;
+        return false;
     }
 
     /**
@@ -177,6 +204,21 @@ class GameTableController extends Controller
             return false;
         }
         return true;
+    }
+
+    /**
+     * finds if the user has a player at this gameTable and returns that player; if no player is found it returns null
+     * @param GameTable $gameTable
+     * @param UserInterface $user
+     * @return |null
+     */
+    private function getPlayer(GameTable $gameTable, UserInterface $user){
+        foreach ($gameTable->getPlayers() as $player) {
+            if ($player->getUser() == $user) {
+                return $player;
+            }
+        }
+        return null;
     }
 
     /**

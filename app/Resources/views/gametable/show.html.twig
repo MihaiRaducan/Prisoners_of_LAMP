@@ -3,6 +3,10 @@
 {% block body %}
     <h1>Gametable</h1>
 
+    <form action="{{ path('gametable_index') }}" method="get">
+        <input type="submit" value="Back to the list">
+    </form>
+
     <table>
         <tbody>
             <tr>
@@ -20,12 +24,41 @@
         </tbody>
     </table>
 
-    <table>
+    <table class="table-dark">
         <tbody>
-        {% for player in gameTable.players %}
         <tr>
             <th>Player</th>
-            <td>{{ player.user.getUsername }}</td>
+            <th>Color</th>
+            <th>Dice roll</th>
+        </tr>
+
+        {% for player in gameTable.players %}
+        <tr>
+            <td>
+                {{ player.user.getUsername }}
+            </td>
+
+            <td>
+                {% if player.user == app.user %}
+                    {{ form_start(color_form) }}
+                    {{ form_widget(color_form.color) }}
+                    {{ form_end(color_form) }}
+
+                {% else %}
+            <div style="background-color: {{player.color}}">&nbsp;</div>
+                {% endif %}
+            </td>
+
+            <td>
+                {% if player.user == app.user %}
+                    <form action="">
+                        <button>⚄ ⚅</button>
+                    </form>
+                {% else %}
+                {{ player.initialDice | default('⚄ ⚅') }}
+                {% endif %}
+            </td>
+
             {% if player.user == app.user %}
             <td>
                 {{ form_start(leave_form) }}
@@ -37,10 +70,9 @@
         {% endfor %}
         </tbody>
     </table>
-
-    <form action="{{ path('gametable_index') }}" method="get">
-        <input type="submit" value="Back to the list">
-    </form>
-
 {% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/gameTable/show.js') }}"></script>
+{% endblock %}
