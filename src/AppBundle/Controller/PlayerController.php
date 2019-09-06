@@ -21,4 +21,15 @@ class PlayerController extends Controller
     public function defaultAction() {
         return new Response('player route working');
     }
+
+    /**
+     * receives a completed form from route "gametable_show"
+     * sets the player color then redirects back to "gametable_show";
+     * @Route("/", name="set_color", methods={"POST"})
+     */
+    public function setColorAction() {
+
+    }
+
+
 }

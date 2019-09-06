@@ -38,12 +38,12 @@
                 {{ player.user.getUsername }}
             </td>
 
-            <td>
+            <td style="background-color: {{player.color}}">
                 {% if player.user == app.user %}
                     {{ form_start(color_form) }}
                     {{ form_widget(color_form.color) }}
+                    <input type="submit" value="Set color">
                     {{ form_end(color_form) }}
-
                 {% else %}
             <div style="background-color: {{player.color}}">&nbsp;</div>
                 {% endif %}

@@ -17,13 +17,16 @@ class DefaultController extends Controller
      */
     public function routerAction(Request $request, UserInterface $user=null)
     {
+        if ($user === null) {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
         foreach ($user->getPlayers() as $player) {
             if ($player->getGameTable()->getStatus() == true) {
                 return $this->redirectToRoute('gametable_show', array(
                     'id' => $player->getGameTable()->getId(),
                 ));
             }
-            //add other conditions type getGame()->getStatus()
+            //TODO add other conditions type getGame()->getStatus()
         }
         return $this->render('default/workingonit.html.twig', [
             'text' => 'This functionality hasn\'t been added yet. I\'m working on it. Or maybe you were trying to sneak around?'

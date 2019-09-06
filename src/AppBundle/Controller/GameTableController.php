@@ -70,14 +70,13 @@ class GameTableController extends Controller
     /**
      * Finds and displays a gameTable entity.
      * if the gameTable has more than the allowed number of players, the last additions are dropped
-     * @Route("/{id}", name="gametable_show", methods={"GET"})
+     * if the two players have the same color the second player color will be set to null
+     * @Route("/{id}", name="gametable_show", methods={"GET", "POST"})
      */
-    public function showAction($id, UserInterface $user=null)
+    public function showAction(Request $request, $id, UserInterface $user=null)
     {
         $em = $this->getDoctrine()->getManager();
         $gameTable = $em->getRepository('AppBundle:GameTable')->find($id);
-
-        dump($gameTable);
 
         if ($gameTable == null) {
             return $this->redirectToRoute('router');
@@ -92,27 +91,32 @@ class GameTableController extends Controller
             $em->flush();
             $removed++;
         }
-
         if ($removed !== 0) {
             return $this->redirectToRoute('router');
         }
 
-        $colors = [null, 'red', 'blue', 'white', 'orange', 'green', 'brown'];
-
-        foreach ($colors as $color){
-            $colorList[$color] = $color;
+        for ($i = 0; $i<count($gameTable->getPlayers()); $i++) {
+            $currentColor = $gameTable->getPlayers()[$i]->getColor();
+            if ($currentColor !== null) {
+                for ($j = $i + 1; $j<count($gameTable->getPlayers()); $j++) {
+                    $unluckyPlayer = $gameTable->getPlayers()[$j];
+                    if ($unluckyPlayer->getColor() == $currentColor) {
+                        $unluckyPlayer->setColor(null);
+                        $em->persist($unluckyPlayer);
+                        $em->flush();
+                    }
+                }
+            }
         }
 
-        $colorForm = $this->createFormBuilder($this->getPlayer($gameTable, $user))
-            ->add('color', ChoiceType::class, [
-                'choices' => $colorList
-                ])
-            ->getForm()
-        ;
+        $colorForm = $this->createSetColorForm($this->getPlayer($gameTable, $user));
+        $colorForm->handleRequest($request);
 
+        if ($colorForm->isSubmitted() && $colorForm->isValid()){
+            $this->getDoctrine()->getManager()->flush();
 
-
-
+            return $this->redirectToRoute('gametable_show', array('id' => $id));
+        }
 
         $leaveForm = $this->createLeaveForm($gameTable);
 
@@ -189,7 +193,7 @@ class GameTableController extends Controller
             if ($player->getGameTable()->getStatus() == true) {
                 return true;
             }
-            //TO DO: add other conditions type getGame()->getStatus()
+            //TODO: add other conditions type getGame()->getStatus()
         }
         return false;
     }
@@ -219,6 +223,30 @@ class GameTableController extends Controller
             }
         }
         return null;
+    }
+
+    /**
+     * creates a form for choosing a color; colors already chosen by other players are removed from the potion list
+     * @param Player $player
+     * @return \Symfony\Component\Form\FormInterface
+     */
+    private function createSetColorForm(Player $player){
+        $colors = [null, 'red', 'blue', 'white', 'orange', 'green', 'brown'];
+
+        foreach ($player->getGameTable()->getPLayers() as $otherPlayer) {
+            if ($player != $otherPlayer && $otherPlayer->getColor() !== null) {
+                $alreadyPicked[] = $otherPlayer->getColor();
+            }
+        }
+
+        $colors = array_diff($colors, $alreadyPicked);
+        foreach ($colors as $color){
+            $colorList[$color] = $color;
+        }
+
+        return $this->createFormBuilder($player)
+            ->add('color', ChoiceType::class, ['choices' => $colorList])
+            ->getForm();
     }
 
     /**
