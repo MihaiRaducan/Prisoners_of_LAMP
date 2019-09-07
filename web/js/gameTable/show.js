@@ -20,5 +20,12 @@ $(document).ready(function () {
         $('input[value="Set color"]').click();
     });
 
+    /**
+     * the user cannot throw the dice before picking a color or when the chosen color is null
+     */
+    if ($('[selected]').text() === "") {
+        $('[value="⚄ ⚅"]').attr('disabled', 'true')
+    }
+
 
 });

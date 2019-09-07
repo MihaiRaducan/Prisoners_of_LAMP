@@ -30,6 +30,7 @@
             <th>Player</th>
             <th>Color</th>
             <th>Dice roll</th>
+            <th>Turn order</th>
         </tr>
 
         {% for player in gameTable.players %}
@@ -39,13 +40,11 @@
             </td>
 
             <td style="background-color: {{player.color}}">
-                {% if player.user == app.user %}
+                {% if player.user == app.user and player.initialDice is null %}
                     {{ form_start(color_form) }}
                     {{ form_widget(color_form.color) }}
                     <input type="submit" value="Set color" style="display: none">
                     {{ form_end(color_form) }}
-                {% else %}
-            <div style="background-color: {{player.color}}">&nbsp;</div>
                 {% endif %}
             </td>
 
@@ -63,14 +62,17 @@
                 {% endif %}
             </td>
 
-            {% if player.user == app.user %}
+            <td>
+                {{ player.turnOrder }}
+            </td>
+
+            {% if player.user == app.user and player.initialDice is null %}
             <td>
                 {{ form_start(leave_form) }}
                 <input type="submit" value="Leave">
                 {{ form_end(leave_form) }}
             </td>
             {% endif %}
-
         </tr>
         {% endfor %}
 

@@ -66,10 +66,11 @@ class GameTableController extends Controller
     }
 
     /**
-     * Finds and displays a gameTable entity.
+     * Finds and displays a gameTable entity; only the ones with status = true will be displayed
      * if the gameTable has more than the allowed number of players, the last additions are dropped
+     * if the gameTable has more than the minimum number of players and all have set their colors and initialDice, close the game and redirect to "set_turn_order"
      * if two players have the same color the second player color will be set to null
-     * f two players have the same initialDice number the second player initialDice number will be set to null
+     * if two players have the same initialDice number the second player initialDice number will be set to null
      * @Route("/{id}", name="gametable_show", methods={"GET", "PATCH"})
      */
     public function showAction(Request $request, $id, UserInterface $user=null)
@@ -77,20 +78,18 @@ class GameTableController extends Controller
         $em = $this->getDoctrine()->getManager();
         $gameTable = $em->getRepository('AppBundle:GameTable')->find($id);
 
-        if ($gameTable == null) {
+        if ($gameTable === null || $gameTable->getStatus() === false) {
             return $this->redirectToRoute('router');
         }
 
         $maxPlayers = substr($gameTable->getMapType(), -1);
         $removed = 0;
-
         while (count($gameTable->getPlayers()) > intval($maxPlayers)) {
             $players = $gameTable->getPlayers();
             $em->remove($players[count($players) - 1]);
             $em->flush();
             $removed++;
         }
-
         if ($removed !== 0) {
             return $this->redirectToRoute('router');
         }
@@ -120,8 +119,11 @@ class GameTableController extends Controller
             }
         }
 
-        $userPlayer = $this->getPlayer($gameTable, $user);
+        if ($this->enoughPlayersReady($gameTable)) {
+            $this->setPlayerOrder($gameTable);
+        }
 
+        $userPlayer = $this->getPlayer($gameTable, $user);
         if ($userPlayer !== null) {
             $colorForm = $this->createSetColorForm($userPlayer);
             $colorForm->handleRequest($request);
@@ -246,6 +248,46 @@ class GameTableController extends Controller
             }
         }
         return null;
+    }
+
+    /**
+     * checks if more than the minimum required number of players for given mapType have set their color and initial dice roll
+     * @param GameTable $gameTable
+     * @return bool
+     */
+    private function enoughPlayersReady(GameTable $gameTable) {
+        $minPlayers = substr($gameTable->getMapType(), 0, 1);
+        if (count($gameTable->getPlayers()) < intval($minPlayers)) {
+            return false;
+        }
+        foreach ($gameTable->getPlayers() as $player) {
+            if ($player->getColor() === null || $player->getInitialDice() === null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * generates the turn order for each player based on all the initial dice rolls
+     * rsort->sorts the array in reverse numerical order (old keys are not kept)
+     * array_search-> returns the first key for the searched value (keys start at 0)
+     * @param GameTable $gameTable
+     */
+    private function setPlayerOrder(GameTable $gameTable) {
+        foreach ($gameTable->getPlayers() as $player) {
+            $diceRolls[] = $player->getInitialDice();
+        }
+        rsort($diceRolls);
+
+        $em = $this->getDoctrine()->getManager();
+        foreach ($gameTable->getPlayers() as $player) {
+            $turnOrder = 1 + array_search($player->getInitialDice(), $diceRolls);
+            $player->setTurnOrder($turnOrder);
+            $em->persist($player);
+            $em->flush();
+        }
+        return;
     }
 
     /**
