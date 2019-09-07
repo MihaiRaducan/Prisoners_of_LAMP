@@ -29,11 +29,9 @@
                     </form>
                 </td>
                 <td>
-
                     <form action="{{ path('gametable_join', { 'id': gameTable.id }) }}" method="post">
                         <input type="submit" value="join" fullStatus="{{ fullStatus[gameTable.id] }}" alreadyPlaying="{{ alreadyPlaying }}">
                     </form>
-
                 </td>
             </tr>
         {% endfor %}

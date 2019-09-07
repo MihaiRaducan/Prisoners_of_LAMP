@@ -42,7 +42,7 @@
                 {% if player.user == app.user %}
                     {{ form_start(color_form) }}
                     {{ form_widget(color_form.color) }}
-                    <input type="submit" value="Set color">
+                    <input type="submit" value="Set color" style="display: none">
                     {{ form_end(color_form) }}
                 {% else %}
             <div style="background-color: {{player.color}}">&nbsp;</div>
@@ -51,9 +51,13 @@
 
             <td>
                 {% if player.user == app.user %}
-                    <form action="">
-                        <button>⚄ ⚅</button>
-                    </form>
+                    {% if player.initialDice is not null %}
+                        {{ player.initialDice }}
+                    {% else %}
+                    {{ form_start(dice_roll_form) }}
+                    <input type="submit" value="⚄ ⚅">
+                    {{ form_end(dice_roll_form) }}
+                    {% endif %}
                 {% else %}
                 {{ player.initialDice | default('⚄ ⚅') }}
                 {% endif %}
@@ -66,8 +70,20 @@
                 {{ form_end(leave_form) }}
             </td>
             {% endif %}
+
         </tr>
         {% endfor %}
+
+        {% if leave_form is null %}
+        <tr>
+            <td>
+                <form action="{{ path('gametable_join', { 'id': gameTable.id }) }}" method="post">
+                    <input type="submit" value="join" isFull="{{ isFull }}">
+                </form>
+            </td>
+        </tr>
+        {% endif %}
+
         </tbody>
     </table>
 {% endblock %}

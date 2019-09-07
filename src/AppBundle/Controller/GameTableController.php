@@ -4,9 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\GameTable;
 use AppBundle\Entity\Player;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\Request;
@@ -70,8 +68,9 @@ class GameTableController extends Controller
     /**
      * Finds and displays a gameTable entity.
      * if the gameTable has more than the allowed number of players, the last additions are dropped
-     * if the two players have the same color the second player color will be set to null
-     * @Route("/{id}", name="gametable_show", methods={"GET", "POST"})
+     * if two players have the same color the second player color will be set to null
+     * f two players have the same initialDice number the second player initialDice number will be set to null
+     * @Route("/{id}", name="gametable_show", methods={"GET", "PATCH"})
      */
     public function showAction(Request $request, $id, UserInterface $user=null)
     {
@@ -84,13 +83,14 @@ class GameTableController extends Controller
 
         $maxPlayers = substr($gameTable->getMapType(), -1);
         $removed = 0;
-        $em = $this->getDoctrine()->getManager();
+
         while (count($gameTable->getPlayers()) > intval($maxPlayers)) {
             $players = $gameTable->getPlayers();
             $em->remove($players[count($players) - 1]);
             $em->flush();
             $removed++;
         }
+
         if ($removed !== 0) {
             return $this->redirectToRoute('router');
         }
@@ -107,23 +107,47 @@ class GameTableController extends Controller
                     }
                 }
             }
+            $currentInitialDice = $gameTable->getPlayers()[$i]->getInitialDice();
+            if ($currentInitialDice !== null) {
+                for ($k = $i + 1; $k<count($gameTable->getPlayers()); $k++) {
+                    $unluckyPlayer = $gameTable->getPlayers()[$k];
+                    if ($unluckyPlayer->getInitialDice() == $currentInitialDice) {
+                        $unluckyPlayer->setInitialDice(null);
+                        $em->persist($unluckyPlayer);
+                        $em->flush();
+                    }
+                }
+            }
         }
 
-        $colorForm = $this->createSetColorForm($this->getPlayer($gameTable, $user));
-        $colorForm->handleRequest($request);
+        $userPlayer = $this->getPlayer($gameTable, $user);
 
-        if ($colorForm->isSubmitted() && $colorForm->isValid()){
-            $this->getDoctrine()->getManager()->flush();
+        if ($userPlayer !== null) {
+            $colorForm = $this->createSetColorForm($userPlayer);
+            $colorForm->handleRequest($request);
 
-            return $this->redirectToRoute('gametable_show', array('id' => $id));
+            if ($colorForm->isSubmitted() && $colorForm->isValid()){
+                $em->flush();
+                return $this->redirectToRoute('gametable_show', array('id' => $id));
+            }
+            $diceRollForm = $this->createDiceRollForm($userPlayer);
+            $leaveForm = $this->createLeaveForm($gameTable);
+
+            return $this->render('gametable/show.html.twig', array(
+                'gameTable' => $gameTable,
+                'color_form' => $colorForm->createView(),
+                'dice_roll_form' => $diceRollForm->createView(),
+                'leave_form' => $leaveForm->createView(),
+                'isFull' => $this->isFull($gameTable),
+            ));
         }
-
-        $leaveForm = $this->createLeaveForm($gameTable);
 
         return $this->render('gametable/show.html.twig', array(
             'gameTable' => $gameTable,
-            'color_form' => $colorForm->createView(),
-            'leave_form' => $leaveForm->createView(),
+            'color_form' => null,
+            'dice_roll_form' => null,
+            'leave_form' => null,
+            'isFull' => $this->isFull($gameTable),
         ));
     }
 
@@ -145,7 +169,6 @@ class GameTableController extends Controller
         $player->setUser($user);
         $gameTable->addPlayer($player);
 
-        $em = $this->getDoctrine()->getManager();
         $em->persist($player);
         $em->persist($gameTable);
         $em->flush();
@@ -226,12 +249,13 @@ class GameTableController extends Controller
     }
 
     /**
-     * creates a form for choosing a color; colors already chosen by other players are removed from the potion list
+     * creates a form for choosing a color; colors already chosen by other players are removed from the option list
      * @param Player $player
      * @return \Symfony\Component\Form\FormInterface
      */
     private function createSetColorForm(Player $player){
         $colors = [null, 'red', 'blue', 'white', 'orange', 'green', 'brown'];
+        $alreadyPicked = [];
 
         foreach ($player->getGameTable()->getPLayers() as $otherPlayer) {
             if ($player != $otherPlayer && $otherPlayer->getColor() !== null) {
@@ -245,8 +269,24 @@ class GameTableController extends Controller
         }
 
         return $this->createFormBuilder($player)
+            ->setMethod('PATCH')
             ->add('color', ChoiceType::class, ['choices' => $colorList])
-            ->getForm();
+            ->getForm()
+            ;
+    }
+
+    /**
+     * create form for generating a random double dice number
+     * @param Player $player
+     * @return \Symfony\Component\Form\FormInterface
+     */
+    private function createDiceRollForm(Player $player)
+    {
+        return $this->createFormBuilder()
+            ->setAction($this->generateUrl('set_initial_dice', array('id' => $player->getId())))
+            ->setMethod('PATCH')
+            ->getForm()
+            ;
     }
 
     /**
