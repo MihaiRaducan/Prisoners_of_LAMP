@@ -12,17 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
  * Player controller.
  * @Route("player")
  */
-
 class PlayerController extends Controller
 {
-    /**
-     * for testing only
-     * @Route("/", name="default_player", methods={"GET"})
-     */
-    public function defaultAction() {
-        return new Response('player route working');
-    }
-
     /**
      * generates a random double dice number and assigns it to the player
      * if one of the other players already has the same number in the database, the function calls on itself again
@@ -54,9 +45,56 @@ class PlayerController extends Controller
         ));
     }
 
+    /**
+     * @param $n
+     * @return Response
+     * @Route("/testDice/{n}", name="test_dice", methods={"GET"})
+     */
+    public function testDiceAction($n) {
+        $result = [];
+        for ($dice = 1; $dice <=2; $dice++) {
+            for ($face = 1; $face <=6; $face++) {
+                $result['d'.$dice][$face] = 0;
+            }
+        }
+
+        $resultSum = [];
+        for ($sum = 2; $sum <= 12; $sum++) {
+            $resultSum[$sum] = 0;
+        }
+
+        for ($i = 1; $i <= $n; $i++) {
+            $doubleDice = $this->generateDoubleDice();
+            for ($case = 1; $case <= 6; $case++) {
+                if ($doubleDice['d1'] === $case) {
+                    $result['d1'][$case]++;
+                }
+                if ($doubleDice['d2']=== $case) {
+                    $result['d2'][$case]++;
+                }
+            }
+            for ($ddSum = 2; $ddSum <= 12; $ddSum++) {
+                if (array_sum($doubleDice) === $ddSum) {
+                    $resultSum[$ddSum]++;
+                }
+            }
+        }
+
+        dump ($result); dump($resultSum);
+
+        return $this->render('gametable/test.html.twig', array(
+            'result' => $result,
+            'resultSum' => $resultSum,
+        ));
+    }//TODO: some simple graphics for test.html.twig
+
+    /**
+     * @return array
+     */
     private function generateDoubleDice() {
-        return [mt_rand(1, 6), mt_rand(1, 6)];
+        return [
+            'd1' => mt_rand(1, 6),
+            'd2' => mt_rand(1, 6)
+        ];
     }
-
-
 }

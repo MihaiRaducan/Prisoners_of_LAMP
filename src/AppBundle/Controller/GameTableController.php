@@ -150,6 +150,7 @@ class GameTableController extends Controller
             'dice_roll_form' => null,
             'leave_form' => null,
             'isFull' => $this->isFull($gameTable),
+            'alreadyPlaying' => $this->alreadyPlaying($user),
         ));
     }
 

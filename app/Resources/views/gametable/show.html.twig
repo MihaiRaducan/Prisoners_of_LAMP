@@ -25,13 +25,15 @@
     </table>
 
     <table class="table-dark">
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Color</th>
+                <th>Dice roll</th>
+                <th>Turn order</th>
+            </tr>
+        </thead>
         <tbody>
-        <tr>
-            <th>Player</th>
-            <th>Color</th>
-            <th>Dice roll</th>
-            <th>Turn order</th>
-        </tr>
 
         {% for player in gameTable.players %}
         <tr>
@@ -66,10 +68,10 @@
                 {{ player.turnOrder }}
             </td>
 
-            {% if player.user == app.user and player.initialDice is null %}
+            {% if player.user == app.user %}
             <td>
                 {{ form_start(leave_form) }}
-                <input type="submit" value="Leave">
+                <input type="submit" value="Leave" committed="{{ player.initialDice }}" disabled="disabled">
                 {{ form_end(leave_form) }}
             </td>
             {% endif %}
@@ -80,7 +82,7 @@
         <tr>
             <td>
                 <form action="{{ path('gametable_join', { 'id': gameTable.id }) }}" method="post">
-                    <input type="submit" value="join" isFull="{{ isFull }}">
+                    <input type="submit" value="join" isFull="{{ isFull }}" alreadyPlaying="{{ alreadyPlaying }}">
                 </form>
             </td>
         </tr>

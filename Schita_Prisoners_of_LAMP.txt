@@ -96,7 +96,7 @@ GameTable:  mapType, status (open/closed)
 
 Entity: Player: turnOrder, color, initialDiceRoll
 
-Entity: Game (id, ) mapType
+Entity: Map (id, ) mapType
                     -OneToMany: Turns, Players
 Entity: Turn (id, ) type (build/exchange)
                     -OneToMany: Hexagons, Edges, Vertices, PlayerStashes,
