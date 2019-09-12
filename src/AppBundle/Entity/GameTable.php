@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OneToOne;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -41,6 +42,12 @@ class GameTable
      * @ORM\OneToMany(targetEntity="Player", mappedBy="gameTable")
      */
     private $players;
+
+    /**
+     * One GameTable has One Game.
+     * @OneToOne(targetEntity="Game", mappedBy="gameTable")
+     */
+    private $game;
 
     public function __construct()
     {
@@ -143,6 +150,22 @@ class GameTable
     public function setPlayers($players)
     {
         $this->players = $players;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGame()
+    {
+        return $this->game;
+    }
+
+    /**
+     * @param mixed $game
+     */
+    public function setGame($game)
+    {
+        $this->game = $game;
     }
 
 }

@@ -44,4 +44,12 @@ $(document).ready(function () {
         $('[value="Leave"]').removeAttr('disabled');
     }
 
+    /**
+     * whenever there is text inside the "Turn order" cell, the "Start" button is clicked
+     */
+    if ($('#players').find('tr').last().children().eq(3).text()) {
+        $('#players').fadeOut();
+        $('input[value="Start"]').click();
+    }
+
 });

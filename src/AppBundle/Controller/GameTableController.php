@@ -120,6 +120,9 @@ class GameTableController extends Controller
         }
 
         if ($this->enoughPlayersReady($gameTable)) {
+            $gameTable->setStatus(false);
+            $em->persist($gameTable);
+            $em->flush();
             $this->setPlayerOrder($gameTable);
         }
 
