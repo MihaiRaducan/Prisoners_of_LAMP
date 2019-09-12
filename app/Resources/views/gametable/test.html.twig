@@ -1,5 +1,33 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    <div class="container">
 
+        <div>After {{ n }} double dice rolls the probabilities are: </div>
+
+        <div>Dice 1</div>
+        {% for i in range(1, 6) %}
+        <div class="progress">
+            <div class="progress-bar bg-info" role="progressbar" style="width: 2%">{{i}}</div>
+            <div class="progress-bar" role="progressbar" style="width: {{dice1['prob'~i]}}%;">{{dice1['prob'~i]}}%</div>({{dice1[i]}} occurrences)
+        </div>
+        {% endfor %}
+
+        <div>Dice 2</div>
+        {% for i in range(1, 6) %}
+            <div class="progress">
+                <div class="progress-bar bg-info" role="progressbar" style="width: 2%">{{i}}</div>
+                <div class="progress-bar" role="progressbar" style="width: {{dice2['prob'~i]}}%;">{{dice2['prob'~i]}}%</div>({{dice2[i]}} occurrences)
+            </div>
+        {% endfor %}
+
+        <div>Sum</div>
+        {% for i in range(2, 12) %}
+            <div class="progress">
+                <div class="progress-bar bg-info" role="progressbar" style="width: 2%">{{i}}</div>
+                <div class="progress-bar" role="progressbar" style="width: {{diceSum['prob'~i]}}%;">{{diceSum['prob'~i]}}%</div>({{diceSum[i]}} occurrences)
+            </div>
+        {% endfor %}
+
+    </div>
 {% endblock %}
