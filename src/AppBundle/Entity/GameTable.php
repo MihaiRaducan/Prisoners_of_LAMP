@@ -79,6 +79,107 @@ class GameTable
     }
 
     /**
+     * @return array
+     */
+    public function trimmedPlayers() {
+        $maxPlayers = substr($this->getMapType(), -1);
+        $trimmed = [];
+        while (count($this->players) > intval($maxPlayers)) {
+            $unluckyPlayer = $this->players[count($this->players) - 1];
+            $this->players->removeElement($unluckyPlayer);
+            $trimmed[] = $unluckyPlayer;
+        }
+        return $trimmed;
+    }
+
+    /**
+     * @return array
+     */
+    public function resetSameColorPlayers() {
+        $unluckyPlayers = [];
+        for ($i = 0; $i<count($this->players); $i++) {
+            $currentColor = $this->players[$i]->getColor();
+            if ($currentColor !== null) {
+                for ($j = $i + 1; $j<count($this->players); $j++) {
+                    $unluckyPlayer = $this->players[$j];
+                    if ($unluckyPlayer->getColor() == $currentColor) {
+                        $unluckyPlayer->setColor(null);
+                        $unluckyPlayers[] = $unluckyPlayer;
+                    }
+                }
+            }
+        }
+        return $unluckyPlayers;
+    }
+
+    /**
+     * @return array
+     */
+    public function resetSameDicePlayers() {
+        $unluckyPlayers = [];
+        for ($i = 0; $i<count($this->players); $i++) {
+            $currentInitialDice = $this->players[$i]->getInitialDice();
+            if ($currentInitialDice !== null) {
+                for ($j = $i + 1; $j<count($this->players); $j++) {
+                    $unluckyPlayer = $this->players[$j];
+                    if ($unluckyPlayer->getInitialDice() == $currentInitialDice) {
+                        $unluckyPlayer->setInitialDice(null);
+                        $unluckyPlayers[] = $unluckyPlayer;
+                    }
+                }
+            }
+        }
+        return $unluckyPlayers;
+    }
+
+    /**
+     * determines whether a GameTable is full
+     * @return bool
+     */
+    public function isFull() {
+        $maxPlayers = substr($this->mapType, -1);
+        if (count($this->players) < intval($maxPlayers)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * checks if more than the minimum required number of players for given mapType have set their color and initial dice roll
+     * @return bool
+     */
+    public function enoughPlayersReady() {
+        $minPlayers = substr($this->mapType, 0, 1);
+        if (count($this->players) < intval($minPlayers)) {
+            return false;
+        }
+        foreach ($this->players as $player) {
+            if ($player->getColor() === null || $player->getInitialDice() === null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * generates the turn order for each player based on all the initial dice rolls
+     * rsort->sorts the array in reverse numerical order (old keys are not kept)
+     * array_search-> returns the first key for the searched value (keys start at 0)
+     */
+    public function setPlayerOrder() {
+        foreach ($this->players as $player) {
+            $diceRolls[] = $player->getInitialDice();
+        }
+        rsort($diceRolls);
+
+        foreach ($this->players as $player) {
+            $turnOrder = 1 + array_search($player->getInitialDice(), $diceRolls);
+            $player->setTurnOrder($turnOrder);
+        }
+        return;
+    }
+
+    /**
      * Get id.
      *
      * @return int

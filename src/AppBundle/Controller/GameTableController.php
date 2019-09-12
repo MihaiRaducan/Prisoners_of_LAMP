@@ -28,13 +28,13 @@ class GameTableController extends Controller
 
         $fullStatus = [];
         foreach ($gameTables as $gameTable) {
-            $fullStatus [$gameTable->getId()] = $this->isFull($gameTable);
+            $fullStatus [$gameTable->getId()] = $gameTable->isFull();
         }
 
         return $this->render('gametable/index.html.twig', array(
             'gameTables' => $gameTables,
             'fullStatus' => $fullStatus,
-            'alreadyPlaying' => $this->alreadyPlaying($user),
+            'alreadyPlaying' => $user->alreadyPlaying(),
         ));
     }
 
@@ -46,7 +46,7 @@ class GameTableController extends Controller
      */
     public function newAction($type, UserInterface $user=null)
     {
-        if (!in_array($type, ["3-4", "5-6"]) || $this->alreadyPlaying($user)) {
+        if (!in_array($type, ["3-4", "5-6"]) || $user->alreadyPlaying()) {
             return $this->redirectToRoute('router');
         }
         $player = new Player();
@@ -67,7 +67,7 @@ class GameTableController extends Controller
 
     /**
      * Finds and displays a gameTable entity; only the ones with status = true will be displayed
-     * if the gameTable has more than the allowed number of players, the last additions are dropped
+     * if the gameTable has more than the allowed number of players, the last additions are dropped with function trimmedPlayers()
      * if the gameTable has at least the minimum number of players and all have set their colors and initialDice, call the setPlayerOrder() function
      * if two players have the same color the second player color will be set to null
      * if two players have the same initialDice number the second player initialDice number will be set to null
@@ -82,48 +82,30 @@ class GameTableController extends Controller
             return $this->redirectToRoute('router');
         }
 
-        $maxPlayers = substr($gameTable->getMapType(), -1);
-        $removed = 0;
-        while (count($gameTable->getPlayers()) > intval($maxPlayers)) {
-            $players = $gameTable->getPlayers();
-            $em->remove($players[count($players) - 1]);
+        foreach ($gameTable->trimmedPlayers() as $player) {
+            $em->remove($player);
             $em->flush();
-            $removed++;
-        }
-        if ($removed !== 0) {
-            return $this->redirectToRoute('router');
         }
 
-        for ($i = 0; $i<count($gameTable->getPlayers()); $i++) {
-            $currentColor = $gameTable->getPlayers()[$i]->getColor();
-            if ($currentColor !== null) {
-                for ($j = $i + 1; $j<count($gameTable->getPlayers()); $j++) {
-                    $unluckyPlayer = $gameTable->getPlayers()[$j];
-                    if ($unluckyPlayer->getColor() == $currentColor) {
-                        $unluckyPlayer->setColor(null);
-                        $em->persist($unluckyPlayer);
-                        $em->flush();
-                    }
-                }
-            }
-            $currentInitialDice = $gameTable->getPlayers()[$i]->getInitialDice();
-            if ($currentInitialDice !== null) {
-                for ($k = $i + 1; $k<count($gameTable->getPlayers()); $k++) {
-                    $unluckyPlayer = $gameTable->getPlayers()[$k];
-                    if ($unluckyPlayer->getInitialDice() == $currentInitialDice) {
-                        $unluckyPlayer->setInitialDice(null);
-                        $em->persist($unluckyPlayer);
-                        $em->flush();
-                    }
-                }
-            }
+        foreach ($gameTable->resetSameColorPlayers() as $player) {
+            $em->persist($player);
+            $em->flush();
         }
 
-        if ($this->enoughPlayersReady($gameTable)) {
+        foreach ($gameTable->resetSameDicePlayers() as $player) {
+            $em->persist($player);
+            $em->flush();
+        }
+
+        if ($gameTable->enoughPlayersReady()) {
             $gameTable->setStatus(false);
             $em->persist($gameTable);
             $em->flush();
-            $this->setPlayerOrder($gameTable);
+            $gameTable->setPlayerOrder();
+            foreach ($gameTable->getPlayers() as $player) {
+                $em->persist($player);
+            }
+            $em->flush();
         }
 
         $userPlayer = $this->getPlayer($gameTable, $user);
@@ -143,7 +125,6 @@ class GameTableController extends Controller
                 'color_form' => $colorForm->createView(),
                 'dice_roll_form' => $diceRollForm->createView(),
                 'leave_form' => $leaveForm->createView(),
-                'isFull' => $this->isFull($gameTable),
             ));
         }
 
@@ -152,8 +133,7 @@ class GameTableController extends Controller
             'color_form' => null,
             'dice_roll_form' => null,
             'leave_form' => null,
-            'isFull' => $this->isFull($gameTable),
-            'alreadyPlaying' => $this->alreadyPlaying($user),
+            'alreadyPlaying' => $user->alreadyPlaying(),
         ));
     }
 
@@ -166,7 +146,7 @@ class GameTableController extends Controller
         $em = $this->getDoctrine()->getManager();
         $gameTable = $em->getRepository('AppBundle:GameTable')->find($id);
 
-        if ($this->alreadyPlaying($user) || $gameTable == null || $gameTable->getStatus() == false || $this->isFull($gameTable)) {
+        if ($user->alreadyPlaying() || $gameTable == null || $gameTable->getStatus() == false || $gameTable->isFull()) {
             return $this->redirectToRoute('router');
         }
 
@@ -211,33 +191,6 @@ class GameTableController extends Controller
     }
 
     /**
-     * finds whether the user has a player already involved in a game(Table)
-     * @param UserInterface|null $user
-     * @return bool
-     */
-    private function alreadyPlaying (UserInterface $user) {
-        foreach ($user->getPlayers() as $player) {
-            if ($player->getGameTable()->getStatus() == true) {
-                return true;
-            }
-            //TODO: add other conditions type getGame()->getStatus()
-        }
-        return false;
-    }
-
-    /**
-     * determines whether a GameTable is full
-     * @return bool
-     */
-    private function isFull(GameTable $gameTable) {
-        $maxPlayers = substr($gameTable->getMapType(), -1);
-        if (count($gameTable->getPlayers()) < intval($maxPlayers)) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
      * finds if the user has a player at this gameTable and returns that player; if no player is found it returns null
      * @param GameTable $gameTable
      * @param UserInterface $user
@@ -250,46 +203,6 @@ class GameTableController extends Controller
             }
         }
         return null;
-    }
-
-    /**
-     * checks if more than the minimum required number of players for given mapType have set their color and initial dice roll
-     * @param GameTable $gameTable
-     * @return bool
-     */
-    private function enoughPlayersReady(GameTable $gameTable) {
-        $minPlayers = substr($gameTable->getMapType(), 0, 1);
-        if (count($gameTable->getPlayers()) < intval($minPlayers)) {
-            return false;
-        }
-        foreach ($gameTable->getPlayers() as $player) {
-            if ($player->getColor() === null || $player->getInitialDice() === null) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * generates the turn order for each player based on all the initial dice rolls
-     * rsort->sorts the array in reverse numerical order (old keys are not kept)
-     * array_search-> returns the first key for the searched value (keys start at 0)
-     * @param GameTable $gameTable
-     */
-    private function setPlayerOrder(GameTable $gameTable) {
-        foreach ($gameTable->getPlayers() as $player) {
-            $diceRolls[] = $player->getInitialDice();
-        }
-        rsort($diceRolls);
-
-        $em = $this->getDoctrine()->getManager();
-        foreach ($gameTable->getPlayers() as $player) {
-            $turnOrder = 1 + array_search($player->getInitialDice(), $diceRolls);
-            $player->setTurnOrder($turnOrder);
-            $em->persist($player);
-            $em->flush();
-        }
-        return;
     }
 
     /**

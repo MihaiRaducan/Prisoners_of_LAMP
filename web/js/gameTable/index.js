@@ -8,7 +8,7 @@ $(document).ready(function () {
     /**
      * users that have a player in an active game are not allowed to: create a new game
      */
-    $('[value="New 2-4 players game"][alreadyplaying="1"]').attr('disabled', 'true');
+    $('[value="New 3-4 players game"][alreadyplaying="1"]').attr('disabled', 'true');
     $('[value="New 5-6 players game"][alreadyplaying="1"]').attr('disabled', 'true');
 
     /**

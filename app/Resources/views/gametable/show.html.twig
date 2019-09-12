@@ -86,7 +86,7 @@
         <tr>
             <td>
                 <form action="{{ path('gametable_join', { 'id': gameTable.id }) }}" method="post">
-                    <input type="submit" value="join" isFull="{{ isFull }}" alreadyPlaying="{{ alreadyPlaying }}">
+                    <input type="submit" value="join" isFull="{{ gameTable.isFull() }}" alreadyPlaying="{{ alreadyPlaying }}">
                 </form>
             </td>
         </tr>

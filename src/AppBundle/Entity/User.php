@@ -54,6 +54,20 @@ class User extends BaseUser
     }
 
     /**
+     * finds whether the user has a player already involved in a game(Table)
+     * @return bool
+     */
+    public function alreadyPlaying () {
+        foreach ($this->players as $player) {
+            if ($player->getGameTable()->getStatus() == true) {
+                return true;
+            }
+            //TODO: add other conditions type getGame()->getStatus()
+        }
+        return false;
+    }
+
+    /**
      * @return mixed
      */
     public function getPlayers()
