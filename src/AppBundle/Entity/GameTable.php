@@ -25,7 +25,7 @@ class GameTable
 
     /**
      * @var string
-     * @Assert\Choice({"2-4", "5-6"})
+     * @Assert\Choice({"3-4", "5-6"})
      * @ORM\Column(name="map_type", type="string", length=8)
      */
     private $mapType;

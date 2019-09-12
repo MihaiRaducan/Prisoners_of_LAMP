@@ -40,13 +40,13 @@ class GameTableController extends Controller
 
     /**
      * Creates a new gameTable entity.
-     * type is restricted to two choices: '2-4'' and '5-6'
+     * type is restricted to two choices: '3-4'' and '5-6'
      * users can't create more than one table at a time
      * @Route("/new/{type}", name="gametable_new", methods={"POST"})
      */
     public function newAction($type, UserInterface $user=null)
     {
-        if (!in_array($type, ["2-4", "5-6"]) || $this->alreadyPlaying($user)) {
+        if (!in_array($type, ["3-4", "5-6"]) || $this->alreadyPlaying($user)) {
             return $this->redirectToRoute('router');
         }
         $player = new Player();
@@ -68,7 +68,7 @@ class GameTableController extends Controller
     /**
      * Finds and displays a gameTable entity; only the ones with status = true will be displayed
      * if the gameTable has more than the allowed number of players, the last additions are dropped
-     * if the gameTable has more than the minimum number of players and all have set their colors and initialDice, close the game and redirect to "set_turn_order"
+     * if the gameTable has at least the minimum number of players and all have set their colors and initialDice, call the setPlayerOrder() function
      * if two players have the same color the second player color will be set to null
      * if two players have the same initialDice number the second player initialDice number will be set to null
      * @Route("/{id}", name="gametable_show", methods={"GET", "PATCH"})
@@ -156,7 +156,6 @@ class GameTableController extends Controller
 
     /**
      * Finds and joins a gameTable entity only if the user_player is not partipating in other gameTables
-     *
      * @Route("/{id}", name="gametable_join", methods={"POST"})
      */
     public function joinAction($id, UserInterface $user=null)
@@ -183,7 +182,6 @@ class GameTableController extends Controller
 
     /**
      * Removes the current player belonging to the user from a gameTable entity.
-     *
      * @Route("/{id}", name="gametable_leave", methods={"DELETE"})
      */
     public function leaveAction(Request $request, GameTable $gameTable, UserInterface $user=null)

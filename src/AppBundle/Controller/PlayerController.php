@@ -94,15 +94,13 @@ class PlayerController extends Controller
             $diceSum['prob' . $key] = $value/$sumDiceSum*100;
         }
 
-        dump ($dice1); dump ($dice2); dump($diceSum);
-
         return $this->render('gametable/test.html.twig', array(
             'n' => $n,
             'dice1' => $dice1,
             'dice2' => $dice2,
             'diceSum' => $diceSum,
         ));
-    }//TODO: some simple graphics for test.html.twig
+    }
 
     /**
      * @return array
