@@ -47,7 +47,7 @@ $(document).ready(function () {
     /**
      * whenever there is text inside the "Turn order" cell, the "Start" button is clicked
      */
-    if ($('#players').find('tr').last().children().eq(3).text()) {
+    if ($('#players').find('tr').last().children().eq(3).text().trim()) {
         $('#players').fadeOut();
         $('input[value="Start"]').click();
     }
