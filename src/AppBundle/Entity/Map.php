@@ -7,12 +7,12 @@ use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\OneToOne;
 
 /**
- * Game
+ * Map
  *
- * @ORM\Table(name="game")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\GameRepository")
+ * @ORM\Table(name="map")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\MapRepository")
  */
-class Game
+class Map
 {
     /**
      * @var int
@@ -26,17 +26,16 @@ class Game
     /**
      * @var int|null
      *
-     * @ORM\Column(name="victorious", type="integer", nullable=true)
+     * @ORM\Column(name="winner_id", type="integer", nullable=true)
      */
-    private $victorious;
+    private $winnerId;
 
     /**
-     * One Game has One GameTable.
-     * @OneToOne(targetEntity="GameTable", inversedBy="game")
+     * One Map has One GameTable.
+     * @OneToOne(targetEntity="GameTable", inversedBy="map")
      * @JoinColumn(name="gameTable_id", referencedColumnName="id")
      */
     private $gameTable;
-
 
     /**
      * Get id.
@@ -49,27 +48,27 @@ class Game
     }
 
     /**
-     * Set victorious.
+     * Set winnerId.
      *
-     * @param int|null $victorious
+     * @param int|null $winnerId
      *
-     * @return Game
+     * @return Map
      */
-    public function setVictorious($victorious = null)
+    public function setWinnerId($winnerId = null)
     {
-        $this->victorious = $victorious;
+        $this->winnerId = $winnerId;
 
         return $this;
     }
 
     /**
-     * Get victorious.
+     * Get winnerId.
      *
      * @return int|null
      */
-    public function getVictorious()
+    public function getWinnerId()
     {
-        return $this->victorious;
+        return $this->winnerId;
     }
 
     /**
@@ -87,5 +86,4 @@ class Game
     {
         $this->gameTable = $gameTable;
     }
-
 }

@@ -2,36 +2,35 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Game;
 use AppBundle\Entity\GameTable;
+use AppBundle\Entity\Map;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 /**
- * Game controller.
- * @Route("game")
+ * Map controller.
+ * @Route("map")
  */
-class GameController extends Controller
+class MapController extends Controller
 {
     /**
-     * @Route("/{id}/new", name="game_new", methods={"POST"})
+     * @Route("/{id}/new", name="map_new", methods={"POST"})
      */
     public function newAction(GameTable $gameTable)
     {
-        if ($gameTable->getGame()) {
+        if ($gameTable->getMap()) {
             return $this->redirectToRoute('router');
         }
 
-        $game = new Game();
-        $game->setGameTable($gameTable);
+        $map = new Map();
+        $map->setGameTable($gameTable);
 
         $em = $this->getDoctrine()->getManager();
-        $em->persist($game);
+        $em->persist($map);
         $em->flush();
 
-        return $this->render('game/new.html.twig', array(
+        return $this->render('map/new.html.twig', array(
             // ...
         ));
     }
-
 }

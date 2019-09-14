@@ -44,10 +44,10 @@ class GameTable
     private $players;
 
     /**
-     * One GameTable has One Game.
-     * @OneToOne(targetEntity="Game", mappedBy="gameTable")
+     * One GameTable has One Map.
+     * @OneToOne(targetEntity="Map", mappedBy="gameTable")
      */
-    private $game;
+    private $map;
 
     public function __construct()
     {
@@ -256,17 +256,17 @@ class GameTable
     /**
      * @return mixed
      */
-    public function getGame()
+    public function getMap()
     {
-        return $this->game;
+        return $this->map;
     }
 
     /**
-     * @param mixed $game
+     * @param $map
      */
-    public function setGame($game)
+    public function setMap($map)
     {
-        $this->game = $game;
+        $this->map = $map;
     }
 
 }
