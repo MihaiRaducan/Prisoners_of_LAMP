@@ -38,6 +38,12 @@ class Map
     private $gameTable;
 
     /**
+     * One Map has Many Tiles
+     * @ORM\OneToMany(targetEntity="Tile", mappedBy="map")
+     */
+    private $tiles;
+
+    /**
      * Get id.
      *
      * @return int
@@ -86,4 +92,22 @@ class Map
     {
         $this->gameTable = $gameTable;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getTiles()
+    {
+        return $this->tiles;
+    }
+
+    /**
+     * @param mixed $tiles
+     */
+    public function setTiles($tiles)
+    {
+        $this->tiles = $tiles;
+    }
+
+
 }

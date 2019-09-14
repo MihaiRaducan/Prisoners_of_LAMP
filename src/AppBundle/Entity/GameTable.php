@@ -39,6 +39,7 @@ class GameTable
     private $status;
 
     /**
+     * One GameTable has Many Players
      * @ORM\OneToMany(targetEntity="Player", mappedBy="gameTable")
      */
     private $players;

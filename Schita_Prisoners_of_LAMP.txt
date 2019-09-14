@@ -88,24 +88,28 @@ Your goal is to gather and processed enough information to discover how you came
 3. Database description
 
 Entity: Users: created using FOSUserBundle
-                    -ManyToMany: GameTable
                     -OneToMany: Players
 
 GameTable:  mapType, status (open/closed)
-                    -ManyToMany: Users, Players
+                    -ManyToMany: Players
 
 Entity: Player: turnOrder, color, initialDiceRoll
 
-Entity: Map (id, ) mapType
-                    -OneToMany: Turns, Players
-Entity: Turn (id, ) type (build/exchange)
-                    -OneToMany: Hexagons, Edges, Vertices, PlayerStashes,
-                    -OneToOne: BankStash
-Entity: Hexagon (id, ) index, tyleType, luckyNumber, blocked
+Entity: Map (id, ) winner_id (nullable, references a player_id)
+                    -OneToMany: Tiles, Edges, Vertices
+
+Entity: Tile (id, ) x_index, y_index, type, luckyNumber
+
 Entity: Edge (id, ) index
                     -OneToOne: wiring (color)
-Entity: Vertex (id, ) index
+
+Entity: Vertex (id, ) index, has_port
                     -OneToOne: building (type, color)
+
+Entity: Turn (id, ) type (build/exchange)
+                    -OneToMany: PlayerStashes,
+                    -OneToOne: BankStash
+
 Entity: PlayerStash: color, resources (integer)
                     -ManyToOne: Player
                     -OneToMany: wiring
