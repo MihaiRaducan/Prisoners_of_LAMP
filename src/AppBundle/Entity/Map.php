@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\OneToOne;
@@ -42,6 +43,14 @@ class Map
      * @ORM\OneToMany(targetEntity="Tile", mappedBy="map")
      */
     private $tiles;
+
+    /**
+     * Map constructor.
+     */
+    public function __construct()
+    {
+        $this->tiles = new ArrayCollection();
+    }
 
     /**
      * Get id.

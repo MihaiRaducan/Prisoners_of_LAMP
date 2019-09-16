@@ -1,99 +1,119 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/map.css') }}">
+{% endblock %}
+
 {% block body %}
-    <h1>Game table</h1>
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            <div class="col-auto">
+                <h1>Game table</h1>
 
-    <form action="{{ path('gametable_index') }}" method="get">
-        <input type="submit" value="Back to the list">
-    </form>
-
-    <form action="{{ path('map_new', { 'id': gameTable.id }) }}" method="post" style="display: none">
-        <input type="submit" value="Start">
-    </form>
-
-    <table>
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ gameTable.id }}</td>
-            </tr>
-            <tr>
-                <th>Maptype</th>
-                <td>{{ gameTable.mapType }}</td>
-            </tr>
-            <tr>
-                <th>Open</th>
-                <td>{% if gameTable.status %}Yes{% else %}No{% endif %}</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <table class="table-dark" id="players">
-        <thead>
-            <tr>
-                <th>Player</th>
-                <th>Color</th>
-                <th>Dice roll</th>
-                <th>Turn order</th>
-            </tr>
-        </thead>
-        <tbody>
-
-        {% for player in gameTable.players %}
-        <tr>
-            <td>
-                {{ player.user.getUsername }}
-            </td>
-
-            <td style="background-color: {{player.color}}">
-                {% if player.user == app.user and player.initialDice is null %}
-                    {{ form_start(color_form) }}
-                    {{ form_widget(color_form.color) }}
-                    <input type="submit" value="Set color" style="display: none">
-                    {{ form_end(color_form) }}
-                {% endif %}
-            </td>
-
-            <td>
-                {% if player.user == app.user %}
-                    {% if player.initialDice is not null %}
-                        {{ player.initialDice }}
-                    {% else %}
-                    {{ form_start(dice_roll_form) }}
-                    <input type="submit" value="⚄ ⚅">
-                    {{ form_end(dice_roll_form) }}
-                    {% endif %}
-                {% else %}
-                {{ player.initialDice | default('⚄ ⚅') }}
-                {% endif %}
-            </td>
-
-            <td>
-                {{ player.turnOrder }}
-            </td>
-
-            {% if player.user == app.user %}
-            <td>
-                {{ form_start(leave_form) }}
-                <input type="submit" value="Leave" committed="{{ player.initialDice }}" disabled="disabled">
-                {{ form_end(leave_form) }}
-            </td>
-            {% endif %}
-        </tr>
-        {% endfor %}
-
-        {% if leave_form is null %}
-        <tr>
-            <td>
-                <form action="{{ path('gametable_join', { 'id': gameTable.id }) }}" method="post">
-                    <input type="submit" value="join" isFull="{{ gameTable.isFull() }}" alreadyPlaying="{{ alreadyPlaying }}">
+                <form action="{{ path('gametable_index') }}" method="get">
+                    <input type="submit" value="Back to the list">
                 </form>
-            </td>
-        </tr>
-        {% endif %}
 
-        </tbody>
-    </table>
+                <form action="{{ path('map_new', { 'id': gameTable.id }) }}" method="post" style="display: none">
+                    <input type="submit" value="Start">
+                </form>
+
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Id</th>
+                            <td>{{ gameTable.id }}</td>
+                        </tr>
+                        <tr>
+                            <th>Maptype</th>
+                            <td>{{ gameTable.mapType }}</td>
+                        </tr>
+                        <tr>
+                            <th>Open</th>
+                            <td>{% if gameTable.status %}Yes{% else %}No{% endif %}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table class="table-dark" id="players">
+                    <thead>
+                        <tr>
+                            <th>Player</th>
+                            <th>Color</th>
+                            <th>Dice roll</th>
+                            <th>Turn order</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    {% for player in gameTable.players %}
+                    <tr>
+                        <td>
+                            {{ player.user.getUsername }}
+                        </td>
+
+                        <td style="background-color: {{player.color}}">
+                            {% if player.user == app.user and player.initialDice is null %}
+                                {{ form_start(color_form) }}
+                                {{ form_widget(color_form.color) }}
+                                <input type="submit" value="Set color" style="display: none">
+                                {{ form_end(color_form) }}
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if player.user == app.user %}
+                                {% if player.initialDice is not null %}
+                                    {{ player.initialDice }}
+                                {% else %}
+                                {{ form_start(dice_roll_form) }}
+                                <input type="submit" value="⚄ ⚅">
+                                {{ form_end(dice_roll_form) }}
+                                {% endif %}
+                            {% else %}
+                            {{ player.initialDice | default('⚄ ⚅') }}
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {{ player.turnOrder }}
+                        </td>
+
+                        {% if player.user == app.user %}
+                        <td>
+                            {{ form_start(leave_form) }}
+                            <input type="submit" value="Leave" committed="{{ player.initialDice }}" disabled="disabled">
+                            {{ form_end(leave_form) }}
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+
+                    {% if leave_form is null %}
+                    <tr>
+                        <td>
+                            <form action="{{ path('gametable_join', { 'id': gameTable.id }) }}" method="post">
+                                <input type="submit" value="join" isFull="{{ gameTable.isFull() }}" alreadyPlaying="{{ alreadyPlaying }}">
+                            </form>
+                        </td>
+                    </tr>
+                    {% endif %}
+
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="col-auto">
+                {% if gameTable.mapType == '3-4' %}
+                    {{ include('map/type34.html.twig', {'map': gameTable.map}) }}
+                {% endif %}
+                {% if gameTable.mapType == '5-6' %}
+                    {{ include('map/type56.html.twig', {'map': gameTable.map}) }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
 
 {% endblock %}
 

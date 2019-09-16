@@ -50,6 +50,9 @@ class GameTable
      */
     private $map;
 
+    /**
+     * GameTable constructor.
+     */
     public function __construct()
     {
         $this->players = new ArrayCollection();

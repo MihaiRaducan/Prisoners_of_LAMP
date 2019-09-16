@@ -1,51 +1,57 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Game list</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-auto">
+                <h1>Game list</h1>
 
-    <form action="{{ path('router') }}" method="get">
-        <input type="submit" value="Back to my game" alreadyPlaying="{{ alreadyPlaying }}">
-    </form>
+                <form action="{{ path('router') }}" method="get">
+                    <input type="submit" value="Back to my game" alreadyPlaying="{{ alreadyPlaying }}">
+                </form>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Map Type</th>
-                <th>Creator</th>
-                <th>Open</th>
-                <th colspan="2">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Map Type</th>
+                            <th>Creator</th>
+                            <th>Open</th>
+                            <th colspan="2">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-        {% for gameTable in gameTables %}
-            <tr>
-                <td>{{ gameTable.mapType }}</td>
-                <td>{{ gameTable.players[0].user.username }}</td>
-                <td>{% if gameTable.status %}Yes{% else %}No{% endif %}</td>
-                <td>
-                    <form action="{{ path('gametable_join', { 'id': gameTable.id }) }}" method="get">
-                            <input type="submit" value="show">
-                    </form>
-                </td>
-                <td>
-                    <form action="{{ path('gametable_join', { 'id': gameTable.id }) }}" method="post">
-                        <input type="submit" value="join" fullStatus="{{ fullStatus[gameTable.id] }}" alreadyPlaying="{{ alreadyPlaying }}">
-                    </form>
-                </td>
-            </tr>
-        {% endfor %}
+                    {% for gameTable in gameTables %}
+                        <tr>
+                            <td>{{ gameTable.mapType }}</td>
+                            <td>{{ gameTable.players[0].user.username }}</td>
+                            <td>{% if gameTable.status %}Yes{% else %}No{% endif %}</td>
+                            <td>
+                                <form action="{{ path('gametable_join', { 'id': gameTable.id }) }}" method="get">
+                                        <input type="submit" value="show">
+                                </form>
+                            </td>
+                            <td>
+                                <form action="{{ path('gametable_join', { 'id': gameTable.id }) }}" method="post">
+                                    <input type="submit" value="join" fullStatus="{{ fullStatus[gameTable.id] }}" alreadyPlaying="{{ alreadyPlaying }}">
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
 
-        </tbody>
-    </table>
+                    </tbody>
+                </table>
 
-    <form action="{{ path('gametable_new', {'type': '3-4'}) }}" method="post">
-        <input type="submit" value="New 3-4 players game" alreadyPlaying="{{ alreadyPlaying }}">
-    </form>
+                <form action="{{ path('gametable_new', {'type': '3-4'}) }}" method="post">
+                    <input type="submit" value="New 3-4 players game" alreadyPlaying="{{ alreadyPlaying }}">
+                </form>
 
-    <form action="{{ path('gametable_new', {'type': '5-6'}) }}" method="post">
-        <input type="submit" value="New 5-6 players game" alreadyPlaying="{{ alreadyPlaying }}">
-    </form>
+                <form action="{{ path('gametable_new', {'type': '5-6'}) }}" method="post">
+                    <input type="submit" value="New 5-6 players game" alreadyPlaying="{{ alreadyPlaying }}">
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block javascripts %}
