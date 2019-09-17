@@ -151,11 +151,11 @@ textures taken and modified from https://leaverou.github.io/css3patterns/#
 }
 
 .edge {
+    position: absolute;
     width: 12px;
     height: 71px;
     background: sandybrown;
-    position: relative;
-    transform: rotate(60deg);
+    transform: rotate(-60deg);
 }
 .edge:before {
     content: "";

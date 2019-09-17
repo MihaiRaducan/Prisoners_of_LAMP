@@ -45,7 +45,7 @@ class Tile
     /**
      * @var int|null
      *
-     * @ORM\Column(name="lucky_number", type="smallint")
+     * @ORM\Column(name="lucky_number", type="smallint", nullable=true)
      */
     private $luckyNumber;
 

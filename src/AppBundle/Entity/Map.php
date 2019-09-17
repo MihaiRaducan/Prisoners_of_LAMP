@@ -44,6 +44,12 @@ class Map
      */
     private $tiles;
 
+    /**
+     * One Map has Many Edges
+     * @ORM\OneToMany(targetEntity="Edge", mappedBy="map")
+     */
+    private $edges;
+
     private $tileIndices34 = [
                 [1, 2], [1, 3], [1, 4],
             [2, 1], [2, 2], [2, 3], [2, 4],
@@ -51,6 +57,21 @@ class Map
             [4, 1], [4, 2], [4, 3], [4, 4],
                 [5, 2], [5, 3], [5, 4],
     ];
+
+    private $edgeIndices34 = [
+                                        [0.5, 1.5], [0.5, 2.0], [0.5, 2.5], [0.5, 3.0], [0.5, 3.5], [0.5, 4.0],
+                                [1.0, 1.5],                 [1.0, 2.5],                 [1.0, 3.5],                 [1.0, 4.5],
+                        [1.5, 1.0], [1.5, 1.5], [1.5, 2.0], [1.5, 2.5], [1.5, 3.0], [1.5, 3.5], [1.5, 4.0], [1.5, 4.5],
+                    [2.0, 0.5],             [2.0, 1.5],                 [2.0, 2.5],                 [2.0, 3.5],                 [2.0, 4.5],
+            [2.5, 0.5], [2.5, 1.0], [2.5, 1.5], [2.5, 2.0], [2.5, 2.5], [2.5, 3.0], [2.5, 3.5], [2.5, 4.0], [2.5, 4.5], [2.5, 5.0],
+        [3.0, 0.5],             [3.0, 1.5],                 [3.0, 2.5],                 [3.0, 3.5],                 [3.0, 4.5],                 [3.0, 5.5],
+            [3.5, 0.5], [3.5, 1.0], [3.5, 1.5], [3.5, 2.0], [3.5, 2.5], [3.5, 3.0], [3.5, 3.5], [3.5, 4.0], [3.5, 4.5], [3.5, 5.0],
+                    [4.0, 0.5],             [4.0, 1.5],                 [4.0, 2.5],                 [4.0, 3.5],                 [4.0, 4.5],
+                        [4.5, 1.0], [4.5, 1.5], [4.5, 2.0], [4.5, 2.5], [4.5, 3.0], [4.5, 3.5], [4.5, 4.0], [4.5, 4.5],
+                                [5.0, 1.5],                 [5.0, 2.5],                 [5.0, 3.5],                 [5.0, 4.5],
+                                        [5.5, 1.5], [5.5, 2.0], [5.5, 2.5], [5.5, 3.0], [5.5, 3.5], [5.5, 4.0]
+    ];
+
     /**
      * The default layout mimics the basic starting map from Settlers of Catan
      * 0 = nothing from 0 = wasteland (desert = pale yellow)
@@ -82,38 +103,20 @@ class Map
     public function __construct($type = null)
     {
         $this->tiles = new ArrayCollection();
+        $this->edges = new ArrayCollection();
         if ($type === '3-4') {
             for ($i = 0; $i < 19; $i++) {
                 $tile = new Tile($this->tileIndices34[$i][0], $this->tileIndices34[$i][1], $this->tileTypes34[$i], $this->luckyNumbers34[$i]);
                 $this->tiles->add($tile);
                 $tile->setMap($this);
             }
+            foreach ($this->edgeIndices34 as $rowPosIndices) {
+                $edge = new Edge($rowPosIndices[0], $rowPosIndices[1]);
+                $this->edges->add($edge);
+                $edge->setMap($this);
+            }
         }
 
-    }
-
-    /**
-     * @param Tile $tile
-     */
-    public function addTile(Tile $tile)
-    {
-        if ($this->tiles->contains($tile)) {
-            return;
-        }
-        $this->tiles->add($tile);
-        $tile->setMap($this);
-    }
-
-    /**
-     * @param Tile $tile
-     */
-    public function removeTile(Tile $tile)
-    {
-        if (!$this->tiles->contains($tile)) {
-            return;
-        }
-        $this->tiles->removeElement($tile);
-        $tile->setMap(null);
     }
 
     /**
@@ -180,6 +183,22 @@ class Map
     public function setTiles($tiles)
     {
         $this->tiles = $tiles;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEdges()
+    {
+        return $this->edges;
+    }
+
+    /**
+     * @param mixed $edges
+     */
+    public function setEdges($edges)
+    {
+        $this->edges = $edges;
     }
 
 
