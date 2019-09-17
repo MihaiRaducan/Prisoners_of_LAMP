@@ -2,7 +2,6 @@
     height: 5%;
 }
 .hexagon {
-    background: green;
     position: absolute;
     display: block;
     /* easy way: height is width * 1.732
@@ -16,7 +15,7 @@
     text-align: center;
 }
 .table {
-    background: lightblue;
+    background: mediumblue;
     position: relative;
     top: 50%;
     left: 50%;
@@ -27,7 +26,7 @@
     vertical-align: middle;
 }
 .hexagon:before {
-    background-color: inherit;
+    background: inherit;
     content: "";
     position: absolute;
     left: 0;
@@ -37,7 +36,7 @@
     z-index: inherit;
 }
 .hexagon:after {
-    background-color: inherit;
+    background: inherit;
     content: "";
     position: absolute;
     left: 0;
@@ -47,15 +46,16 @@
     z-index: inherit;
 }
 /**
-H = W*
+Considering 10% width on each side for wiring
+ScalingW% = 1.8876*ScalingH%
  */
 .hexagontent {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    height: 100%;
-    width: 173.2%;
+    height: 92%;
+    width: 169.88%;
     z-index: 100;
 }
 .circle {
@@ -63,19 +63,12 @@ H = W*
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    border-radius: 50%;
-}
-.outer {
-    width: 50px;
-    height: 50px;
-    background: black;
-    z-index: 150;
-}
-.inner {
     width: 40px;
     height: 40px;
-    background: white;
-    z-index: 200;
+    background: lightyellow;
+    z-index: 150;
+    border-radius: 50%;
+    border: 1px solid black;
 }
 .number {
     vertical-align: middle;
@@ -83,4 +76,73 @@ H = W*
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    font-weight: bold;
+}
+.n2, .n12 {
+    font-size: 100%;
+}
+.n3, .n11 {
+    font-size: 120%;
+}
+.n4, .n10 {
+    font-size: 140%;
+}
+.n5, .n9 {
+    font-size: 160%;
+}
+.n6, .n8 {
+    font-size: 180%;
+    color: red;
+}
+.type0 {
+    background:
+            radial-gradient(circle at 100% 50%, transparent 20%, rgba(155, 135, 12, 1.0) 21%, rgba(155, 135, 12, 1.0) 34%, transparent 35%, transparent),
+            radial-gradient(circle at 0% 50%, transparent 20%, rgba(155, 135, 12, 1.0) 21%, rgba(155, 135, 12, 1.0) 34%, transparent 35%, transparent) 0 -6px;
+    background-color: #fce883;
+    background-size: 9px 12px;
+}
+.type1 {
+    background-color:darkgreen;
+    background-image:
+            radial-gradient(circle at 100% 150%, darkgreen 24%, green 24%, green 28%, darkgreen 28%, darkgreen 36%, green 36%, green 40%, transparent 40%, transparent),
+            radial-gradient(circle at 0    150%, darkgreen 24%, green 24%, green 28%, darkgreen 28%, darkgreen 36%, green 36%, green 40%, transparent 40%, transparent),
+            radial-gradient(circle at 50%  100%, green 10%, darkgreen 10%, darkgreen 23%, green 23%, green 30%, darkgreen 30%, darkgreen 43%, green 43%, green 50%, darkgreen 50%, darkgreen 63%, green 63%, green 71%, transparent 71%, transparent),
+            radial-gradient(circle at 100% 50%, green 5%, darkgreen 5%, darkgreen 15%, green 15%, green 20%, darkgreen 20%, darkgreen 29%, green 29%, green 34%, darkgreen 34%, darkgreen 44%, green 44%, green 49%, transparent 49%, transparent),
+            radial-gradient(circle at 0    50%, green 5%, darkgreen 5%, darkgreen 15%, green 15%, green 20%, darkgreen 20%, darkgreen 29%, green 29%, green 34%, darkgreen 34%, darkgreen 44%, green 44%, green 49%, transparent 49%, transparent);
+    background-size: 40px 20px;
+}
+.type2 {
+    background-color: sandybrown;
+    background-image: linear-gradient(335deg, #b00 8px, transparent 8px),
+    linear-gradient(155deg, #d00 8px, transparent 8px),
+    linear-gradient(335deg, #b00 8px, transparent 8px),
+    linear-gradient(155deg, #d00 8px, transparent 8px);
+    background-size: 19px 19px;
+    background-position: 0px 1px, 1px 12px, 10px 10px, 11px 2px;
+}
+.type3 {
+    background-color: lightgreen;
+    background-image: radial-gradient(white 2px, transparent 3px),
+    repeating-radial-gradient(white 0, white 4px, transparent 5px, transparent 20px, white 21px, white 25px, transparent 26px, transparent 50px);
+    background-size: 15px 15px, 45px 45px;
+    background-position: 0 0;
+}
+.type4 {
+    background-color: gold;
+    background-image: linear-gradient(90deg, rgba(255,255,255,.07) 50%, transparent 50%),
+    linear-gradient(90deg, rgba(155, 135, 12,.13) 50%, transparent 50%),
+    linear-gradient(90deg, transparent 50%, rgba(155, 135, 12,.17) 50%),
+    linear-gradient(90deg, transparent 50%, rgba(155, 135, 12,.19) 50%);
+    background-size: 13px, 29px, 37px, 53px;
+}
+.type5 {
+    background-color:#556;
+    background-image: linear-gradient(30deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445),
+    linear-gradient(150deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445),
+    linear-gradient(30deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445),
+    linear-gradient(150deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445),
+    linear-gradient(60deg, #99a 25%, transparent 25.5%, transparent 75%, #99a 75%, #99a),
+    linear-gradient(60deg, #99a 25%, transparent 25.5%, transparent 75%, #99a 75%, #99a);
+    background-size:40px 70px;
+    background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
 }
