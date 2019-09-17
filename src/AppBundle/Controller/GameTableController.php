@@ -193,6 +193,10 @@ class GameTableController extends Controller
                 }
             }
             if (count($gameTable->getPlayers()) == 0) {
+                foreach ($gameTable->getMap()->getTiles() as $tile) {
+                    $em->remove($tile);
+                }
+                $em->remove($gameTable->getMap());
                 $em->remove($gameTable);
             }
             $em->flush();

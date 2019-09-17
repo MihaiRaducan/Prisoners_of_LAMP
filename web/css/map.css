@@ -9,13 +9,13 @@
     remove border-radius for sharp corners on hexagons
     these are calculated leaving 10% width (11px) on each side for wiring
     */
-    width: 125px;
-    height: 72px;
+    width: 123px;
+    height: 71px;
     z-index: 100;
     text-align: center;
 }
 .table {
-    background: mediumblue;
+    background: deepskyblue;
     position: relative;
     top: 50%;
     left: 50%;
@@ -54,7 +54,7 @@ ScalingW% = 1.8876*ScalingH%
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    height: 92%;
+    height: 90%;
     width: 169.88%;
     z-index: 100;
 }
@@ -94,6 +94,9 @@ ScalingW% = 1.8876*ScalingH%
     font-size: 180%;
     color: red;
 }
+/*
+textures taken and modified from https://leaverou.github.io/css3patterns/#
+ */
 .type0 {
     background:
             radial-gradient(circle at 100% 50%, transparent 20%, rgba(155, 135, 12, 1.0) 21%, rgba(155, 135, 12, 1.0) 34%, transparent 35%, transparent),
@@ -145,4 +148,34 @@ ScalingW% = 1.8876*ScalingH%
     linear-gradient(60deg, #99a 25%, transparent 25.5%, transparent 75%, #99a 75%, #99a);
     background-size:40px 70px;
     background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+}
+
+.edge {
+    width: 12px;
+    height: 71px;
+    background: sandybrown;
+    position: relative;
+    transform: rotate(60deg);
+}
+.edge:before {
+    content: "";
+    position: absolute;
+    top: -11px;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 12px solid sandybrown;
+}
+.edge:after {
+    content: "";
+    position: absolute;
+    bottom: -11px;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 12px solid sandybrown;
 }
