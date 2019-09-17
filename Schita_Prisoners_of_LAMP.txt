@@ -21,8 +21,14 @@ The minimally playable version will be released first and implement the followin
  -map will be saved to and loaded from a database on each turn for each player;
  -player resource stacks and piece stacks will be included in the save to the database; player buildings and wiring on the map will be deduced from the map data;
  -game score will be automatically calculated after loading (see PIPs below);
- -resources: plastic (from dump), copper (from ruined plant), drone (from conflict zone), motherboards (from abandoned warehouse), processors (from derelict data-center);
- -game pieces: wiring (price: 1 plastic and 1 copper), processing plant (price: 1 pl, 1 co, 1 drone, 1 motherboard), Supercomputer hub (price 2 motherboards + 3 processors);
+ -resources (from tileTypes, Settlers of Catan equivalent in parenthesis):
+        0 = nothing from 0 = wasteland (desert = pale yellow)
+        1 = plastic from 1 = landfill (wood from forest, dark green),
+        2 = copper from 2 = ruined plant (bricks from hills, red-brown),
+        3 = drone from 3 = conflict zone (wool/sheep from pasture, white on light green),
+        4 = gold from 4 = electronic waste (grain from field, gold/brown),
+        5 = high-purity silicon from 5 = derelict data-center (ore from mountain, white/grey);
+ -game pieces: wiring (price: 1 plastic and 1 copper), processing plant (price: 1 pl, 1 co, 1 drone, 1 gold), Supercomputer hub (price 2 gold + 3 silicon);
  -bank stack of resources (19x each); resources generation will be deducted from here;
  -resource stack for each player: resource generation will add resource here;
  -stack of pieces for each player: wiringx15, processing plantx5, Supercomputer hubx4

@@ -8,7 +8,7 @@
 {% block body %}
     <div class="container-fluid">
         <div class="row flex-nowrap">
-            <div class="col-auto">
+            <div class="col-xl-3">
                 <h1>Game table</h1>
 
                 <form action="{{ path('gametable_index') }}" method="get">
@@ -104,7 +104,7 @@
                 </table>
             </div>
 
-            <div class="col-auto">
+            <div class="col-xl-7">
                 {% if gameTable.mapType == '3-4' %}
                     {{ include('map/type34.html.twig', {'map': gameTable.map}) }}
                 {% endif %}
@@ -112,6 +112,7 @@
                     {{ include('map/type56.html.twig', {'map': gameTable.map}) }}
                 {% endif %}
             </div>
+
         </div>
     </div>
 

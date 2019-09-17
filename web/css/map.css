@@ -1,25 +1,30 @@
+.spacer {
+    height: 5%;
+}
 .hexagon {
     background: green;
-    position: relative;
-    display: inline-block;
-    margin: 1px 30px;
-    transform: rotate(30deg);
+    position: absolute;
+    display: block;
     /* easy way: height is width * 1.732
     actual formula is 2*(width/(2*Math.tan(Math.PI/6)))
-    remove border-radius for sharp corners on hexagons */
-    width: 67px;
-    height: 116px;
+    remove border-radius for sharp corners on hexagons
+    these are calculated leaving 10% width (11px) on each side for wiring
+    */
+    width: 125px;
+    height: 72px;
     z-index: 100;
     text-align: center;
 }
 .table {
     background: lightblue;
     position: relative;
-    display: inline-block;
-    width: 400px;
-    height: 692px;
-    transform: rotate(0deg);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 404px;
+    height: 700px;
     z-index: 50;
+    vertical-align: middle;
 }
 .hexagon:before {
     background-color: inherit;
@@ -41,14 +46,16 @@
     height: inherit;
     z-index: inherit;
 }
-
+/**
+H = W*
+ */
 .hexagontent {
-    background-color: white;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 160%;
+    height: 100%;
+    width: 173.2%;
     z-index: 100;
 }
 .circle {
@@ -56,15 +63,24 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    border-radius: 50%;
+}
+.outer {
     width: 50px;
     height: 50px;
+    background: black;
+    z-index: 150;
+}
+.inner {
+    width: 40px;
+    height: 40px;
     background: white;
-    border-radius: 50%;
-    z-index: 100;
+    z-index: 200;
 }
 .number {
+    vertical-align: middle;
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) rotate(-30deg);
+    transform: translate(-50%, -50%);
 }

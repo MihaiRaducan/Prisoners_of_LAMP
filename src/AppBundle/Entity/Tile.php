@@ -24,16 +24,16 @@ class Tile
     /**
      * @var int
      *
-     * @ORM\Column(name="x_index", type="smallint")
+     * @ORM\Column(name="row_index", type="smallint")
      */
-    private $xIndex;
+    private $rowIndex;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="y_index", type="smallint")
+     * @ORM\Column(name="pos_index", type="smallint")
      */
-    private $yIndex;
+    private $posIndex;
 
     /**
      * @var int
@@ -43,7 +43,7 @@ class Tile
     private $type;
 
     /**
-     * @var int
+     * @var int|null
      *
      * @ORM\Column(name="lucky_number", type="smallint")
      */
@@ -56,6 +56,13 @@ class Tile
      */
     private $map;
 
+    public function __construct($rowIndex = null, $posIndex = null, $type = null, $luckyNumber = null)
+    {
+        $this->setRowIndex($rowIndex);
+        $this->setPosIndex($posIndex);
+        $this->setType($type);
+        $this->setLuckyNumber($luckyNumber);
+    }
 
     /**
      * Get id.
@@ -68,51 +75,35 @@ class Tile
     }
 
     /**
-     * Set xIndex.
-     *
-     * @param int $xIndex
-     *
-     * @return Tile
-     */
-    public function setXIndex($xIndex)
-    {
-        $this->xIndex = $xIndex;
-
-        return $this;
-    }
-
-    /**
-     * Get xIndex.
-     *
      * @return int
      */
-    public function getXIndex()
+    public function getRowIndex()
     {
-        return $this->xIndex;
+        return $this->rowIndex;
     }
 
     /**
-     * Set yIndex.
-     *
-     * @param int $yIndex
-     *
-     * @return Tile
+     * @param int $rowIndex
      */
-    public function setYIndex($yIndex)
+    public function setRowIndex($rowIndex)
     {
-        $this->yIndex = $yIndex;
-
-        return $this;
+        $this->rowIndex = $rowIndex;
     }
 
     /**
-     * Get yIndex.
-     *
      * @return int
      */
-    public function getYIndex()
+    public function getPosIndex()
     {
-        return $this->yIndex;
+        return $this->posIndex;
+    }
+
+    /**
+     * @param int $posIndex
+     */
+    public function setPosIndex($posIndex)
+    {
+        $this->posIndex = $posIndex;
     }
 
     /**

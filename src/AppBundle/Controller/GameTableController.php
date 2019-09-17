@@ -3,12 +3,14 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\GameTable;
+use AppBundle\Entity\Map;
 use AppBundle\Entity\Player;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Gametable controller.
@@ -55,9 +57,17 @@ class GameTableController extends Controller
         $gameTable = new GameTable();
         $gameTable->setStatus(true)->setMapType($type)->addPlayer($player);
 
+        $map = new Map($type);
+        $map->setGameTable($gameTable);
+        $gameTable->setMap($map);
+
         $em = $this->getDoctrine()->getManager();
         $em->persist($player);
         $em->persist($gameTable);
+        $em->persist($map);
+        foreach ($map->getTiles() as $tile) {
+            $em->persist($tile);
+        }
         $em->flush();
 
         return $this->redirectToRoute('gametable_show', array(
