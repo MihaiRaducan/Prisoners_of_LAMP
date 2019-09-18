@@ -68,6 +68,9 @@ class GameTableController extends Controller
         foreach ($map->getTiles() as $tile) {
             $em->persist($tile);
         }
+        foreach ($map->getEdges() as $edge) {
+            $em->persist($edge);
+        }
         $em->flush();
 
         return $this->redirectToRoute('gametable_show', array(
@@ -192,9 +195,13 @@ class GameTableController extends Controller
                     $em->remove($player);
                 }
             }
+
             if (count($gameTable->getPlayers()) == 0) {
                 foreach ($gameTable->getMap()->getTiles() as $tile) {
                     $em->remove($tile);
+                }
+                foreach ($gameTable->getMap()->getEdges() as $edge) {
+                    $em->remove($edge);
                 }
                 $em->remove($gameTable->getMap());
                 $em->remove($gameTable);

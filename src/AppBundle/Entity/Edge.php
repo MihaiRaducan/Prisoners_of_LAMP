@@ -48,6 +48,10 @@ class Edge
         $this->setPosIndex($posIndex);
     }
 
+    public function inclination(){
+
+    }
+
     /**
      * Get id.
      *

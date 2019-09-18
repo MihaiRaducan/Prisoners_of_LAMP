@@ -11,8 +11,8 @@
     */
     width: 123px;
     height: 71px;
-    z-index: 100;
     text-align: center;
+    z-index: 150;
 }
 .table {
     background: deepskyblue;
@@ -22,8 +22,8 @@
     transform: translate(-50%, -50%);
     width: 404px;
     height: 700px;
-    z-index: 50;
     vertical-align: middle;
+    z-index: 100;
 }
 .hexagon:before {
     background: inherit;
@@ -56,7 +56,7 @@ ScalingW% = 1.8876*ScalingH%
     transform: translate(-50%, -50%);
     height: 90%;
     width: 169.88%;
-    z-index: 100;
+    z-index: 200;
 }
 .circle {
     position: absolute;
@@ -66,7 +66,7 @@ ScalingW% = 1.8876*ScalingH%
     width: 40px;
     height: 40px;
     background: lightyellow;
-    z-index: 150;
+    z-index: 250;
     border-radius: 50%;
     border: 1px solid black;
 }
@@ -155,7 +155,6 @@ textures taken and modified from https://leaverou.github.io/css3patterns/#
     width: 12px;
     height: 71px;
     background: sandybrown;
-    transform: rotate(-60deg);
 }
 .edge:before {
     content: "";
@@ -166,7 +165,7 @@ textures taken and modified from https://leaverou.github.io/css3patterns/#
     height: 0;
     border-left: 6px solid transparent;
     border-right: 6px solid transparent;
-    border-bottom: 12px solid sandybrown;
+    border-bottom: 11px solid sandybrown;
 }
 .edge:after {
     content: "";
@@ -177,5 +176,5 @@ textures taken and modified from https://leaverou.github.io/css3patterns/#
     height: 0;
     border-left: 6px solid transparent;
     border-right: 6px solid transparent;
-    border-top: 12px solid sandybrown;
+    border-top: 11px solid sandybrown;
 }
