@@ -159,22 +159,22 @@ textures taken and modified from https://leaverou.github.io/css3patterns/#
 .edge:before {
     content: "";
     position: absolute;
-    top: -11px;
+    top: -7px;
     left: 0;
     width: 0;
     height: 0;
     border-left: 6px solid transparent;
     border-right: 6px solid transparent;
-    border-bottom: 11px solid sandybrown;
+    border-bottom: 7px solid sandybrown;
 }
 .edge:after {
     content: "";
     position: absolute;
-    bottom: -11px;
+    bottom: -7px;
     left: 0;
     width: 0;
     height: 0;
     border-left: 6px solid transparent;
     border-right: 6px solid transparent;
-    border-top: 11px solid sandybrown;
+    border-top: 7px solid sandybrown;
 }

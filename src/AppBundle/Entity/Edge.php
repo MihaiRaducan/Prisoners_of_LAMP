@@ -49,7 +49,22 @@ class Edge
     }
 
     public function inclination(){
-
+        if ((2*$this->rowIndex)%2 == 0) {
+            return 0;
+        }
+        if (($this->rowIndex - 0.5)%2 == 0) {
+            if ((2*$this->posIndex)%2 == 1) {
+                return 60;
+            }
+            return -60;
+        }
+        if (($this->rowIndex - 0.5)%2 ==1) {
+            if ((2*$this->posIndex)%2 == 0) {
+                return 60;
+            }
+            return -60;
+        }
+        return false;
     }
 
     /**
