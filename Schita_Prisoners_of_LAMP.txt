@@ -104,12 +104,12 @@ Entity: Player: turnOrder, color, initialDiceRoll
 Entity: Map (id, ) winner_id (nullable, references a player_id)
                     -OneToMany: Tiles, Edges, Vertices
 
-Entity: Tile (id, ) x_index, y_index, type, luckyNumber
+Entity: Tile (id, ) row_index, pos_index, type, luckyNumber
 
-Entity: Edge (id, ) index
+Entity: Edge (id, ) row_index, pos_index
                     -OneToOne: wiring (color)
 
-Entity: Vertex (id, ) index, has_port
+Entity: Vertex (id, ) index, port_type
                     -OneToOne: building (type, color)
 
 Entity: Turn (id, ) type (build/exchange)

@@ -150,10 +150,10 @@ textures taken and modified from https://leaverou.github.io/css3patterns/#
     background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
 }
 
-/*width modified from 12px to 13px for better overall overlap*/
+/*width modified from 12px to 14px for better overall overlap*/
 .edge {
     position: absolute;
-    width: 13px;
+    width: 14px;
     height: 71px;
     background: sandybrown;
 }
@@ -164,8 +164,8 @@ textures taken and modified from https://leaverou.github.io/css3patterns/#
     left: 0;
     width: 0;
     height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
     border-bottom: 7px solid sandybrown;
 }
 .edge:after {
@@ -175,7 +175,7 @@ textures taken and modified from https://leaverou.github.io/css3patterns/#
     left: 0;
     width: 0;
     height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
     border-top: 7px solid sandybrown;
 }

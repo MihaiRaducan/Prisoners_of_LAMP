@@ -50,6 +50,12 @@ class Map
      */
     private $edges;
 
+    /**
+     * One Map has Many Vertices
+     * @ORM\OneToMany(targetEntity="Vertex", mappedBy="map")
+     */
+    private $vertices;
+
     private $tileIndices34 = [
                 [1, 2], [1, 3], [1, 4],
             [2, 1], [2, 2], [2, 3], [2, 4],
@@ -104,6 +110,7 @@ class Map
     {
         $this->tiles = new ArrayCollection();
         $this->edges = new ArrayCollection();
+        $this->vertices = new ArrayCollection();
         if ($type === '3-4') {
             for ($i = 0; $i < 19; $i++) {
                 $tile = new Tile($this->tileIndices34[$i][0], $this->tileIndices34[$i][1], $this->tileTypes34[$i], $this->luckyNumbers34[$i]);
@@ -199,6 +206,22 @@ class Map
     public function setEdges($edges)
     {
         $this->edges = $edges;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getVertices()
+    {
+        return $this->vertices;
+    }
+
+    /**
+     * @param mixed $vertices
+     */
+    public function setVertices($vertices)
+    {
+        $this->vertices = $vertices;
     }
 
 
