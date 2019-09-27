@@ -70,6 +70,9 @@ class GameTableController extends Controller
         foreach ($map->getEdges() as $edge) {
             $em->persist($edge);
         }
+        foreach ($map->getVertices() as $vertex) {
+            $em->persist($vertex);
+        }
         $em->flush();
 
         return $this->redirectToRoute('gametable_show', array(
@@ -201,6 +204,9 @@ class GameTableController extends Controller
                 }
                 foreach ($gameTable->getMap()->getEdges() as $edge) {
                     $em->remove($edge);
+                }
+                foreach ($gameTable->getMap()->getVertices() as $vertex) {
+                    $em->remove($vertex);
                 }
                 $em->remove($gameTable->getMap());
                 $em->remove($gameTable);

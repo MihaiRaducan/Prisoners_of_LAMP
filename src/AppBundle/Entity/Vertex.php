@@ -22,16 +22,16 @@ class Vertex
     private $id;
 
     /**
-     * @var int
+     * @var string
      *
-     * @ORM\Column(name="row_index", type="smallint")
+     * @ORM\Column(name="row_index", type="decimal", precision=2, scale=1)
      */
     private $rowIndex;
 
     /**
-     * @var int
+     * @var string
      *
-     * @ORM\Column(name="pos_index", type="smallint")
+     * @ORM\Column(name="pos_index", type="decimal", precision=2, scale=1)
      */
     private $posIndex;
 
@@ -48,6 +48,12 @@ class Vertex
      * @ORM\JoinColumn(name="map_id", referencedColumnName="id")
      */
     private $map;
+
+    public function __construct($rowIndex = null, $posIndex = null)
+    {
+        $this->setRowIndex($rowIndex);
+        $this->setPosIndex($posIndex);
+    }
 
     /**
      * Get id.
@@ -130,4 +136,21 @@ class Vertex
     {
         return $this->portType;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getMap()
+    {
+        return $this->map;
+    }
+
+    /**
+     * @param mixed $map
+     */
+    public function setMap($map)
+    {
+        $this->map = $map;
+    }
+
 }
