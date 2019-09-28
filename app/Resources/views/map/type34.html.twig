@@ -67,7 +67,26 @@
 
             {% endfor %}
 
-            <div class="structure2"></div>
+            {% for vertex in map.mapEdgeConnectors34 %}
+                <div class="mapEdgeConnector" style="
+                        transform: rotate({{vertex[2]}}deg) translate(-50%, -50%);
+                        top:
+                {% if vertex[0]|round == vertex[0]|round(0, 'floor') %}
+                    {{ (100/8.9)*(1/20) + (100/8.9)*(vertex[0] - 0.3)*(1 + 1/2 + 3/20) }}%;
+                {% elseif vertex[0]|round == vertex[0]|round(0, 'ceil') %}
+                    {{ (100/8.9)*(3/20 + 1/2 - 1/20) + (100/8.9)*(vertex[0] - 0.7)*(1 + 1/2 + 3/20) }}%;
+                {% endif %}
+                        left:
+                {% if vertex[0]|round is not divisible by(2) %}
+                        {{ (100/5.6)*(1/20) + (100/5.6)*(vertex[1] - 0.5)*1.1 }}%
+                {% elseif vertex[0]|round is divisible by(2) %}
+                        {{ (100/5.6)*(1/10 + 1/2) + (100/5.6)*(vertex[1] - 0.5)*1.1 }}%
+                {% endif %}
+                        ">
+                </div>
+            {% endfor %}
+
+
 
         </div>
     </div>

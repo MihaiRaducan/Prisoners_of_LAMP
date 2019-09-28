@@ -1,7 +1,7 @@
 .spacer {
     height: 5%;
 }
-.circle, .vertex, .table, .hexagontent, .number {
+.circle, .vertex, .table, .hexagontent, .number, .mapEdgeConnector {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -47,7 +47,7 @@
     height: inherit;
     z-index: inherit;
 }
-/**
+/*
 Considering 10% width on each side for wiring
 ScalingW% = 1.8876*ScalingH%
  */
@@ -59,11 +59,11 @@ ScalingW% = 1.8876*ScalingH%
 .circle, .vertex {
     width: 47px;
     height: 47px;
-    background: #F0DC82;
     z-index: 250;
     border-radius: 50%;
 }
 .circle {
+    background: #F0DC82;
     border: 2px solid black;
 }
 .number {
@@ -140,6 +140,12 @@ textures taken and modified from https://leaverou.github.io/css3patterns/#
     linear-gradient(60deg, #99a 25%, transparent 25.5%, transparent 75%, #99a 75%, #99a);
     background-size:40px 70px;
     background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+}
+.mapEdgeConnector {
+    width: 35px;
+    height: 71px;
+    background-color: lightblue;
+    z-index: 500;
 }
 /*shapes taken from https://css-tricks.com/the-shapes-of-css/*/
 /*edge is a modified hexagon*/

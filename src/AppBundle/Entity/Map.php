@@ -53,6 +53,31 @@ class Map
     ];
 
     /**
+     * The default layout mimics the basic starting map from Settlers of Catan
+     * 0 = nothing from 0 = wasteland (desert = pale yellow)
+     * 1 = plastic from 1 = landfill (wood from forest, dark green),
+     * 2 = copper from 2 = ruined plant (bricks from hills, red-brown),
+     * 3 = drone from 3 = conflict zone (wool/sheep from pasture, white on light green),
+     * 4 = gold from 4 = electronic waste (grain from field, gold/brown),
+     * 5 = high-purity silicon from 5 = derelict data-center (ore from mountain, white/grey);
+     */
+    private $tileTypes34 = [
+            1, 3, 3,
+          4, 5, 4, 1,
+        1, 2, 0, 5, 4,
+          4, 5, 1, 3,
+            2, 3, 2
+    ];
+
+    private $luckyNumbers34 = [
+              6, 3, 8,
+           2, 4, 5, 10,
+        5, 9, null, 6, 9,
+          10, 11, 3, 12,
+              8, 4, 11
+    ];
+
+    /**
      * One Map has Many Edges
      * @ORM\OneToMany(targetEntity="Edge", mappedBy="map")
      */
@@ -94,28 +119,19 @@ class Map
     ];
 
     /**
-     * The default layout mimics the basic starting map from Settlers of Catan
-     * 0 = nothing from 0 = wasteland (desert = pale yellow)
-     * 1 = plastic from 1 = landfill (wood from forest, dark green),
-     * 2 = copper from 2 = ruined plant (bricks from hills, red-brown),
-     * 3 = drone from 3 = conflict zone (wool/sheep from pasture, white on light green),
-     * 4 = gold from 4 = electronic waste (grain from field, gold/brown),
-     * 5 = high-purity silicon from 5 = derelict data-center (ore from mountain, white/grey);
+     * the vertices on the edge of the map can have ports
      */
-    private $tileTypes34 = [
-            1, 3, 3,
-          4, 5, 4, 1,
-        1, 2, 0, 5, 4,
-          4, 5, 1, 3,
-            2, 3, 2
+    private $verticesOnMapEdge34 = [
+
     ];
 
-    private $luckyNumbers34 = [
-          6, 3, 8,
-        2, 4, 5, 10,
-      5, 9, null, 6, 9,
-        10, 11, 3, 12,
-          8, 4, 11
+    /**
+     * a map has 6 edges with various combinations of ports
+     * these are the vertices where those edges connect
+     * [rowIndex, posIndex, inclination]
+     */
+    private $mapEdgeConnectors34 = [
+        [0.3, 3.5, 0], [0.7, 1.5, -60], [2.7, 5.5, 60], [3.3, 0.5, -120], [5.3, 4.5, 120], [5.7, 1.5, 0],
     ];
 
     /**
@@ -244,5 +260,12 @@ class Map
         $this->vertices = $vertices;
     }
 
+    /**
+     * @return array
+     */
+    public function getMapEdgeConnectors34()
+    {
+        return $this->mapEdgeConnectors34;
+    }
 
 }
