@@ -17,7 +17,7 @@
     width: 123px;
     height: 71px;
     text-align: center;
-    z-index: 150;
+    z-index: 300;
 }
 .table {
     background: deepskyblue;
@@ -59,8 +59,8 @@ ScalingW% = 1.8876*ScalingH%
 .circle, .vertex {
     width: 47px;
     height: 47px;
-    z-index: 250;
     border-radius: 50%;
+    z-index: 400;
 }
 .circle {
     background: #F0DC82;
@@ -142,10 +142,10 @@ textures taken and modified from https://leaverou.github.io/css3patterns/#
     background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
 }
 .mapEdgeConnector {
-    width: 35px;
-    height: 71px;
+    width: 1px;
+    height: 78px;
     background-color: lightblue;
-    z-index: 500;
+    z-index: 250;
 }
 /*shapes taken from https://css-tricks.com/the-shapes-of-css/*/
 /*edge is a modified hexagon*/
@@ -156,6 +156,7 @@ textures taken and modified from https://leaverou.github.io/css3patterns/#
     height: 71px;
     background: #E0AB76;
     border-color: #E0AB76;
+    z-index: 300;
 }
 .edge:before {
     content: "";
