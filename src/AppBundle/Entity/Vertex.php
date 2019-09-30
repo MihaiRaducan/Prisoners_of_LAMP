@@ -43,13 +43,20 @@ class Vertex
     private $portType;
 
     /**
+     * @var int|null
+     *
+     * @ORM\Column(name="port_inclination", type="smallint", nullable=true)
+     */
+    private $portInclination;
+
+    /**
      * Many Vertices have One Map
      * @ORM\ManyToOne(targetEntity="Map", inversedBy="vertices")
      * @ORM\JoinColumn(name="map_id", referencedColumnName="id")
      */
     private $map;
 
-    public function __construct($rowIndex = null, $posIndex = null)
+    public function __construct($rowIndex = null, $posIndex = null, $portType = null, $portInclination = null)
     {
         $this->setRowIndex($rowIndex);
         $this->setPosIndex($posIndex);
@@ -135,6 +142,22 @@ class Vertex
     public function getPortType()
     {
         return $this->portType;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getPortInclination()
+    {
+        return $this->portInclination;
+    }
+
+    /**
+     * @param int|null $portInclination
+     */
+    public function setPortInclination($portInclination)
+    {
+        $this->portInclination = $portInclination;
     }
 
     /**

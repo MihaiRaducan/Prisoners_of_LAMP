@@ -103,26 +103,67 @@ class Map
      */
     private $vertices;
 
-    private $vertexIndices34 = [
-                                            [0.3, 1.5],         [0.3, 2.5],         [0.3, 3.5],
-                                [0.7, 1.5],         [0.7, 2.5],         [0.7, 3.5],         [0.7, 4.5],
-                                [1.3, 1.5],         [1.3, 2.5],         [1.3, 3.5],         [1.3, 4.5],
-                    [1.7, 0.5],         [1.7, 1.5],         [1.7, 2.5],         [1.7, 3.5],         [1.7, 4.5],
-                    [2.3, 0.5],         [2.3, 1.5],         [2.3, 2.5],         [2.3, 3.5],         [2.3, 4.5],
-        [2.7, 0.5],         [2.7, 1.5],         [2.7, 2.5],         [2.7, 3.5],         [2.7, 4.5],         [2.7, 5.5],
-        [3.3, 0.5],         [3.3, 1.5],         [3.3, 2.5],         [3.3, 3.5],         [3.3, 4.5],         [3.3, 5.5],
-                    [3.7, 0.5],         [3.7, 1.5],         [3.7, 2.5],         [3.7, 3.5],         [3.7, 4.5],
-                    [4.3, 0.5],         [4.3, 1.5],         [4.3, 2.5],         [4.3, 3.5],         [4.3, 4.5],
-                                [4.7, 1.5],         [4.7, 2.5],         [4.7, 3.5],         [4.7, 4.5],
-                                [5.3, 1.5],         [5.3, 2.5],         [5.3, 3.5],         [5.3, 4.5],
-                                            [5.7, 1.5],         [5.7, 2.5],         [5.7, 3.5],
+    private $innerVertexIndices34 = [
+                                [1.3, 2.5],         [1.3, 3.5],
+                    [1.7, 1.5],         [1.7, 2.5],         [1.7, 3.5],
+                    [2.3, 1.5],         [2.3, 2.5],         [2.3, 3.5],
+        [2.7, 1.5],         [2.7, 2.5],         [2.7, 3.5],         [2.7, 4.5],
+        [3.3, 1.5],         [3.3, 2.5],         [3.3, 3.5],         [3.3, 4.5],
+                    [3.7, 1.5],         [3.7, 2.5],         [3.7, 3.5],
+                    [4.3, 1.5],         [4.3, 2.5],         [4.3, 3.5],
+                                [4.7, 2.5],         [4.7, 3.5],
+
+
     ];
 
     /**
-     * the vertices on the edge of the map can have ports
+     * the vertices on the edge of the map can have ports, clockwise
      */
-    private $verticesOnMapEdge34 = [
+    private $verticesOnMapEdges34 = [
+        [
+            [0.7, 1.5], [0.3, 1.5], [0.7, 2.5], [0.3, 2.5], [0.7, 3.5],
+        ],
+        [
+            [0.3, 3.5], [0.7, 4.5], [1.3, 4.5], [1.7, 4.5], [2.3, 4.5],
+        ],
+        [
+            [2.7, 5.5], [3.3, 5.5], [3.7, 4.5], [4.3, 4.5], [4.7, 4.5],
+        ],
+        [
+            [5.3, 4.5], [5.7, 3.5], [5.3, 3.5], [5.7, 2.5], [5.3, 2.5],
+        ],
+        [
+            [5.7, 1.5], [5.3, 1.5], [4.7, 1.5], [4.3, 0.5], [3.7, 0.5],
+        ],
+        [
+            [3.3, 0.5], [2.7, 0.5], [2.3, 0.5], [1.7, 0.5], [1.3, 1.5],
+        ],
+    ];
 
+    /**
+     * the map Edges and the ports they can have
+     * [port_type, port_inclination]
+     * port_types correspond to resource types except port_type = 0 which exchanges all resources
+     */
+    private $portsOnMapEdges34 = [
+        [
+            [0, 0], [0, -30], [null, null], [3, 30], [3, 0]
+        ],
+        [
+            [null, null], [null, null], [0, 0], [0, -30], [null, null]
+        ],
+        [
+            [0, 0], [0, -30], [null, null], [2, 30], [2, 0]
+        ],
+        [
+            [null, null], [null, null], [1, 0], [1, -30], [null, null]
+        ],
+        [
+            [0, 0], [0, -30], [null, null], [4, 30], [4, 0]
+        ],
+        [
+            [null, null], [null, null], [5, 0], [5, -30], [null, null]
+        ]
     ];
 
     /**
@@ -153,11 +194,21 @@ class Map
                 $this->edges->add($edge);
                 $edge->setMap($this);
             }
-            foreach ($this->vertexIndices34 as $rowPosIndices) {
+            foreach ($this->innerVertexIndices34 as $rowPosIndices) {
                 $vertex = new Vertex($rowPosIndices[0], $rowPosIndices[1]);
                 $this->vertices->add($vertex);
                 $vertex->setMap($this);
             }
+            for ($i = 0; $i < 6; $i++) {
+                for ($j = 0; $j < 5; $j++) {
+                    $vertex = new Vertex($this->verticesOnMapEdges34[$i][$j][0], $this->verticesOnMapEdges34[$i][$j][1]);
+                    $vertex->setPortType($this->portsOnMapEdges34[$i][$j][0]);
+                    $vertex->setPortInclination($i*60 + $this->portsOnMapEdges34[$i][$j][1]);
+                    $this->vertices->add($vertex);
+                    $vertex->setMap($this);
+                }
+            }
+
         }
 
     }
