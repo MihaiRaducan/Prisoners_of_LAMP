@@ -62,7 +62,14 @@
                                 {{ (100/5.6)*(1/10 + 1/2) + (100/5.6)*(vertex.posIndex - 0.5)*1.1 }}%
                         {% endif %}
                         ">
-
+                    {% if vertex.portType is not null %}
+                        <div class="port type{{ vertex.portType }}" style="
+                                top: 50%;
+                                left: 50%;
+                                transform: translate(-50%, -50%) rotate({{vertex.portInclination}}deg)
+                                ">
+                        </div>
+                    {% endif %}
                 </div>
 
             {% endfor %}

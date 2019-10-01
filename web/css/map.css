@@ -1,7 +1,7 @@
 .spacer {
     height: 5%;
 }
-.circle, .vertex, .table, .hexagontent, .number, .mapEdgeConnector {
+.circle, .vertex, .table, .hexagontent, .number, .mapEdgeConnector, .port {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -86,6 +86,46 @@ ScalingW% = 1.8876*ScalingH%
     font-size: 200%;
     color: red;
 }
+/*shapes taken from https://css-tricks.com/the-shapes-of-css/*/
+/*edge is a modified hexagon*/
+/*edge width modified from 12px to 14px for better overall overlap*/
+.port {
+    width: 12px;
+    height: 78px;
+    z-index: 100;
+}
+.edge {
+    width: 14px;
+    height: 71px;
+    position: absolute;
+    background: #E0AB76;
+    border-color: #E0AB76;
+    z-index: 500;
+}
+.edge:before {
+    content: "";
+    position: absolute;
+    top: -7px;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid;
+    border-bottom-color: inherit;
+}
+.edge:after {
+    content: "";
+    position: absolute;
+    bottom: -7px;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 7px solid;
+    border-top-color: inherit;
+}
 /*
 textures taken and modified from https://leaverou.github.io/css3patterns/#
  */
@@ -146,41 +186,6 @@ textures taken and modified from https://leaverou.github.io/css3patterns/#
     height: 78px;
     background-color: lightblue;
     z-index: 250;
-}
-/*shapes taken from https://css-tricks.com/the-shapes-of-css/*/
-/*edge is a modified hexagon*/
-/*edge width modified from 12px to 14px for better overall overlap*/
-.edge {
-    position: absolute;
-    width: 14px;
-    height: 71px;
-    background: #E0AB76;
-    border-color: #E0AB76;
-    z-index: 300;
-}
-.edge:before {
-    content: "";
-    position: absolute;
-    top: -7px;
-    left: 0;
-    width: 0;
-    height: 0;
-    border-left: 7px solid transparent;
-    border-right: 7px solid transparent;
-    border-bottom: 7px solid;
-    border-bottom-color: inherit;
-}
-.edge:after {
-    content: "";
-    position: absolute;
-    bottom: -7px;
-    left: 0;
-    width: 0;
-    height: 0;
-    border-left: 7px solid transparent;
-    border-right: 7px solid transparent;
-    border-top: 7px solid;
-    border-top-color: inherit;
 }
 /*structure1 is a star octagon; parent and after: are squares*/
 .structure1 {

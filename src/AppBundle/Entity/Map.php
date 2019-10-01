@@ -147,22 +147,22 @@ class Map
      */
     private $portsOnMapEdges34 = [
         [
-            [0, 0], [0, -30], [null, null], [3, 30], [3, 0]
+            [0, 0], [0, -60], [null, null], [3, 60], [3, 0]
         ],
         [
-            [null, null], [null, null], [0, 0], [0, -30], [null, null]
+            [null, null], [null, null], [0, 0], [0, -60], [null, null]
         ],
         [
-            [0, 0], [0, -30], [null, null], [2, 30], [2, 0]
+            [0, 0], [0, -60], [null, null], [2, 60], [2, 0]
         ],
         [
-            [null, null], [null, null], [1, 0], [1, -30], [null, null]
+            [null, null], [null, null], [1, 0], [1, -60], [null, null]
         ],
         [
-            [0, 0], [0, -30], [null, null], [4, 30], [4, 0]
+            [0, 0], [0, -60], [null, null], [4, 60], [4, 0]
         ],
         [
-            [null, null], [null, null], [5, 0], [5, -30], [null, null]
+            [null, null], [null, null], [5, 0], [5, -60], [null, null]
         ]
     ];
 
@@ -208,7 +208,6 @@ class Map
                     $vertex->setMap($this);
                 }
             }
-
         }
 
     }
