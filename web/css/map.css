@@ -60,6 +60,7 @@ ScalingW% = 1.8876*ScalingH%
     width: 47px;
     height: 47px;
     border-radius: 50%;
+    background: #F0DC82;
     z-index: 400;
 }
 .circle {
@@ -90,8 +91,9 @@ ScalingW% = 1.8876*ScalingH%
 /*edge is a modified hexagon*/
 /*edge width modified from 12px to 14px for better overall overlap*/
 .port {
-    width: 12px;
-    height: 78px;
+    width: 14px;
+    height: 89px;
+    border: 3px solid #E0AB76;
     z-index: 100;
 }
 .edge {
@@ -100,7 +102,7 @@ ScalingW% = 1.8876*ScalingH%
     position: absolute;
     background: #E0AB76;
     border-color: #E0AB76;
-    z-index: 500;
+    z-index: 400;
 }
 .edge:before {
     content: "";
