@@ -62,16 +62,25 @@
                                 {{ (100/5.6)*(1/10 + 1/2) + (100/5.6)*(vertex.posIndex - 0.5)*1.1 }}%
                         {% endif %}
                         ">
-                    {% if vertex.portType is not null %}
-                        <div class="port type{{ vertex.portType }}" style="
-                                top: 50%;
-                                left: 50%;
-                                transform: translate(-50%, -50%) rotate({{vertex.portInclination}}deg)
-                                ">
-                        </div>
-                    {% endif %}
                 </div>
-
+                {% if vertex.portType is not null %}
+                    <div class="port type{{ vertex.portType }}" style="
+                            transform: translate(-50%, -50%) rotate({{vertex.portInclination}}deg);
+                            top:
+                    {% if vertex.rowIndex|round == vertex.rowIndex|round(0, 'floor') %}
+                        {{ (100/8.9)*(1/20) + (100/8.9)*(vertex.rowIndex - 0.3)*(1 + 1/2 + 3/20) }}%;
+                    {% elseif vertex.rowIndex|round == vertex.rowIndex|round(0, 'ceil') %}
+                        {{ (100/8.9)*(3/20 + 1/2 - 1/20) + (100/8.9)*(vertex.rowIndex - 0.7)*(1 + 1/2 + 3/20) }}%;
+                    {% endif %}
+                            left:
+                    {% if vertex.rowIndex|round is not divisible by(2) %}
+                            {{ (100/5.6)*(1/20) + (100/5.6)*(vertex.posIndex - 0.5)*1.1 }}%
+                    {% elseif vertex.rowIndex|round is divisible by(2) %}
+                            {{ (100/5.6)*(1/10 + 1/2) + (100/5.6)*(vertex.posIndex - 0.5)*1.1 }}%
+                    {% endif %}
+                            ">
+                    </div>
+                {% endif %}
             {% endfor %}
 
             {% for vertex in map.mapEdgeConnectors34 %}

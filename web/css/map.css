@@ -60,7 +60,6 @@ ScalingW% = 1.8876*ScalingH%
     width: 47px;
     height: 47px;
     border-radius: 50%;
-    background: #F0DC82;
     z-index: 400;
 }
 .circle {
@@ -94,7 +93,7 @@ ScalingW% = 1.8876*ScalingH%
     width: 14px;
     height: 89px;
     border: 3px solid #E0AB76;
-    z-index: 100;
+    z-index: 200;
 }
 .edge {
     width: 14px;

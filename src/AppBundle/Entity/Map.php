@@ -52,6 +52,10 @@ class Map
                 [5, 2], [5, 3], [5, 4],
     ];
 
+    private $tileIndices34ClockwiseArr = [
+        [1, 2]
+    ];
+
     /**
      * The default layout mimics the basic starting map from Settlers of Catan
      * 0 = nothing from 0 = wasteland (desert = pale yellow)
@@ -69,6 +73,11 @@ class Map
             2, 3, 2
     ];
 
+    /**
+     * according to the rules of Catan, this array should not be randomized.
+     * the lucky numbers have to be arranged in a certain order starting from one of the corners;
+     * (the lucky number tokens have letters on their back and should be placed in alphabetical order)
+     */
     private $luckyNumbers34 = [
               6, 3, 8,
            2, 4, 5, 10,
@@ -112,8 +121,6 @@ class Map
                     [3.7, 1.5],         [3.7, 2.5],         [3.7, 3.5],
                     [4.3, 1.5],         [4.3, 2.5],         [4.3, 3.5],
                                 [4.7, 2.5],         [4.7, 3.5],
-
-
     ];
 
     /**
@@ -142,6 +149,8 @@ class Map
 
     /**
      * the map Edges and the ports they can have
+     * NOTE: the 3-4 player map and 4-5 player map use the same edges with ports;
+     * NOTE: the 4-5 player map uses 4 additional edge spacers
      * [port_type, port_inclination]
      * port_types correspond to resource types except port_type = 0 which exchanges all resources
      */
@@ -184,21 +193,9 @@ class Map
         $this->edges = new ArrayCollection();
         $this->vertices = new ArrayCollection();
         if ($type === '3-4') {
-            for ($i = 0; $i < 19; $i++) {
-                $tile = new Tile($this->tileIndices34[$i][0], $this->tileIndices34[$i][1], $this->tileTypes34[$i], $this->luckyNumbers34[$i]);
-                $this->tiles->add($tile);
-                $tile->setMap($this);
-            }
-            foreach ($this->edgeIndices34 as $rowPosIndices) {
-                $edge = new Edge($rowPosIndices[0], $rowPosIndices[1]);
-                $this->edges->add($edge);
-                $edge->setMap($this);
-            }
-            foreach ($this->innerVertexIndices34 as $rowPosIndices) {
-                $vertex = new Vertex($rowPosIndices[0], $rowPosIndices[1]);
-                $this->vertices->add($vertex);
-                $vertex->setMap($this);
-            }
+            $this->createRandomTiles($this->tileIndices34, $this->tileTypes34, $this->luckyNumbers34);
+            $this->createEdges($this->edgeIndices34);
+            $this->createInnerVertices($this->innerVertexIndices34);
             for ($i = 0; $i < 6; $i++) {
                 for ($j = 0; $j < 5; $j++) {
                     $vertex = new Vertex($this->verticesOnMapEdges34[$i][$j][0], $this->verticesOnMapEdges34[$i][$j][1]);
@@ -209,6 +206,33 @@ class Map
                 }
             }
         }
+    }
+
+    private function createRandomTiles (array $tileIndices, array $tileTypes, array $luckyNumbers) {
+        foreach ($tileIndices as $key => $rowPosIndices) {
+            $tile = new Tile($rowPosIndices[0], $rowPosIndices[1], $tileTypes[$key], $luckyNumbers[$key]);
+            $this->tiles->add($tile);
+            $tile->setMap($this);
+        }
+    }
+
+    private function createEdges(array $edgeIndices) {
+        foreach ($edgeIndices as $rowPosIndices) {
+            $edge = new Edge($rowPosIndices[0], $rowPosIndices[1]);
+            $this->edges->add($edge);
+            $edge->setMap($this);
+        }
+    }
+
+    private function createInnerVertices(array $innerVertexIndices) {
+        foreach ($innerVertexIndices as $rowPosIndices) {
+            $vertex = new Vertex($rowPosIndices[0], $rowPosIndices[1]);
+            $this->vertices->add($vertex);
+            $vertex->setMap($this);
+        }
+    }
+
+    private function createVerticesOnMapEdges(array $verticesOnMapEdges, array $portsOnMapEdges) {
 
     }
 
