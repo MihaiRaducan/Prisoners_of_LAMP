@@ -56,7 +56,7 @@ class Vertex
      */
     private $map;
 
-    public function __construct($rowIndex = null, $posIndex = null, $portType = null, $portInclination = null)
+    public function __construct($rowIndex = null, $posIndex = null)
     {
         $this->setRowIndex($rowIndex);
         $this->setPosIndex($posIndex);

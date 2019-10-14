@@ -67,6 +67,8 @@ class Edge
         return false;
     }
 
+
+
     /**
      * Get id.
      *

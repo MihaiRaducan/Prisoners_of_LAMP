@@ -96,6 +96,8 @@ class Map
               8, 4, 11
     ];
 
+    private $luckyNumbers34OrderedAR = [5, 2, 6, 3, 8, 10, 9, 12, 11, 4, 8, 10, 9, 4, 5, 6, 3, 11];
+
     /**
      * One Map has Many Edges
      * @ORM\OneToMany(targetEntity="Edge", mappedBy="map")
@@ -122,68 +124,42 @@ class Map
      */
     private $vertices;
 
-    private $innerVertexIndices34 = [
-                                [1.3, 2.5],         [1.3, 3.5],
-                    [1.7, 1.5],         [1.7, 2.5],         [1.7, 3.5],
-                    [2.3, 1.5],         [2.3, 2.5],         [2.3, 3.5],
-        [2.7, 1.5],         [2.7, 2.5],         [2.7, 3.5],         [2.7, 4.5],
-        [3.3, 1.5],         [3.3, 2.5],         [3.3, 3.5],         [3.3, 4.5],
-                    [3.7, 1.5],         [3.7, 2.5],         [3.7, 3.5],
-                    [4.3, 1.5],         [4.3, 2.5],         [4.3, 3.5],
-                                [4.7, 2.5],         [4.7, 3.5],
+    private $noPortVertexIndices34 = [
+                                                                                            [0.3, 3.5],
+                                                        [0.7, 2.5],                                   [0.7, 4.5],
+                                [1.3, 1.5],         [1.3, 2.5],         [1.3, 3.5],
+                                            [1.7, 1.5],         [1.7, 2.5],         [1.7, 3.5],
+                                            [2.3, 1.5],         [2.3, 2.5],         [2.3, 3.5],         [2.3, 4.5],
+        [2.7, 0.5],         [2.7, 1.5],         [2.7, 2.5],         [2.7, 3.5],         [2.7, 4.5],
+        [3.3, 0.5],         [3.3, 1.5],         [3.3, 2.5],         [3.3, 3.5],         [3.3, 4.5],
+                                            [3.7, 1.5],         [3.7, 2.5],         [3.7, 3.5],         [3.7, 4.5],
+                                            [4.3, 1.5],         [4.3, 2.5],         [4.3, 3.5],
+                                [4.7, 1.5],         [4.7, 2.5],         [4.7, 3.5],
+                                                        [5.3, 2.5],                                   [5.3, 4.5],
+                                                                                            [5.7, 3.5],
     ];
 
     /**
-     * the vertices on the edge of the map can have ports, clockwise
-     */
-    private $verticesOnMapEdges34 = [
-        [
-            [0.7, 1.5], [0.3, 1.5], [0.7, 2.5], [0.3, 2.5], [0.7, 3.5],
-        ],
-        [
-            [0.3, 3.5], [0.7, 4.5], [1.3, 4.5], [1.7, 4.5], [2.3, 4.5],
-        ],
-        [
-            [2.7, 5.5], [3.3, 5.5], [3.7, 4.5], [4.3, 4.5], [4.7, 4.5],
-        ],
-        [
-            [5.3, 4.5], [5.7, 3.5], [5.3, 3.5], [5.7, 2.5], [5.3, 2.5],
-        ],
-        [
-            [5.7, 1.5], [5.3, 1.5], [4.7, 1.5], [4.3, 0.5], [3.7, 0.5],
-        ],
-        [
-            [3.3, 0.5], [2.7, 0.5], [2.3, 0.5], [1.7, 0.5], [1.3, 1.5],
-        ],
-    ];
-
-    /**
-     * the map Edges and the ports they can have
+     * the vertices on the edge of the map that can have ports, clockwise
      * NOTE: the 3-4 player map and 4-5 player map use the same edges with ports;
      * NOTE: the 4-5 player map uses 4 additional edge spacers
-     * [port_type, port_inclination]
-     * port_types correspond to resource types except port_type = 0 which exchanges all resources
+     * [row_index, pos_index, port_inclination]
+     * each pair of vertices will be assigned the same port_type
      */
-    private $portsOnMapEdges34 = [
-        [
-            [0, 0], [0, -60], [null, null], [3, 60], [3, 0]
-        ],
-        [
-            [null, null], [null, null], [0, 0], [0, -60], [null, null]
-        ],
-        [
-            [0, 0], [0, -60], [null, null], [2, 60], [2, 0]
-        ],
-        [
-            [null, null], [null, null], [1, 0], [1, -60], [null, null]
-        ],
-        [
-            [0, 0], [0, -60], [null, null], [4, 60], [4, 0]
-        ],
-        [
-            [null, null], [null, null], [5, 0], [5, -60], [null, null]
-        ]
+    private $portIndices34 = [
+        [   [0.7, 1.5, 0], [0.3, 1.5, -60]  ], [    [0.3, 2.5, 60], [0.7, 3.5, 0]   ],
+                                [   [1.3, 4.5, 60], [1.7, 4.5, 0]   ],
+        [   [2.7, 5.5, -60], [3.3, 5.5, 60] ], [    [4.3, 4.5, 0], [4.7, 4.5, -60]   ],
+                                [   [5.3, 3.5, 0], [5.7, 2.5, -60]  ],
+        [   [5.7, 1.5, 60], [5.3, 1.5, 0]   ], [    [4.3, 0.5, -60], [3.7, 0.5, 60]  ],
+                                [   [2.3, 0.5, -60], [1.7, 0.5, 60]    ]
     ];
+
+    /**
+     * port_types correspond to resource types except port_type = 0 which exchanges all resources
+     * this is the clockwise arrangement in the basic map
+     */
+    private $ports34 = [0, 3, 0, 0, 2, 1, 0, 4, 5,];
 
     /**
      * a map has 6 edges with various combinations of ports
@@ -205,45 +181,45 @@ class Map
         if ($type === '3-4') {
             $this->createRandomTiles($this->tileIndices34, $this->tileTypes34, $this->luckyNumbers34);
             $this->createEdges($this->edgeIndices34);
-            $this->createInnerVertices($this->innerVertexIndices34);
-            for ($i = 0; $i < 6; $i++) {
-                for ($j = 0; $j < 5; $j++) {
-                    $vertex = new Vertex($this->verticesOnMapEdges34[$i][$j][0], $this->verticesOnMapEdges34[$i][$j][1]);
-                    $vertex->setPortType($this->portsOnMapEdges34[$i][$j][0]);
-                    $vertex->setPortInclination($i*60 + $this->portsOnMapEdges34[$i][$j][1]);
-                    $this->vertices->add($vertex);
-                    $vertex->setMap($this);
-                }
-            }
+            $this->createNoPortVertices($this->noPortVertexIndices34);
+            $this->createRandomPortVertices($this->portIndices34, $this->ports34);
         }
     }
 
     private function createRandomTiles (array $tileIndices, array $tileTypes, array $luckyNumbers) {
         foreach ($tileIndices as $key => $rowPosIndices) {
             $tile = new Tile($rowPosIndices[0], $rowPosIndices[1], $tileTypes[$key], $luckyNumbers[$key]);
-            $this->tiles->add($tile);
             $tile->setMap($this);
+            $this->tiles->add($tile);
         }
     }
 
     private function createEdges(array $edgeIndices) {
         foreach ($edgeIndices as $rowPosIndices) {
             $edge = new Edge($rowPosIndices[0], $rowPosIndices[1]);
-            $this->edges->add($edge);
             $edge->setMap($this);
+            $this->edges->add($edge);
         }
     }
 
-    private function createInnerVertices(array $innerVertexIndices) {
-        foreach ($innerVertexIndices as $rowPosIndices) {
+    private function createNoPortVertices(array $noPortVertexIndices) {
+        foreach ($noPortVertexIndices as $rowPosIndices) {
             $vertex = new Vertex($rowPosIndices[0], $rowPosIndices[1]);
-            $this->vertices->add($vertex);
             $vertex->setMap($this);
+            $this->vertices->add($vertex);
         }
     }
 
-    private function createVerticesOnMapEdges(array $verticesOnMapEdges, array $portsOnMapEdges) {
-
+    private function createRandomPortVertices(array $portIndices, array $ports) {
+        foreach ($portIndices as $key => $portPair) {
+            for ($i = 0; $i < 2; $i++) {
+                $vertex = new Vertex($portPair[$i][0], $portPair[$i][1]);
+                $vertex->setPortInclination($portPair[$i][2]);
+                $vertex->setPortType($ports[$key]);
+                $vertex->setMap($this);
+                $this->vertices->add($vertex);
+            }
+        }
     }
 
     /**
